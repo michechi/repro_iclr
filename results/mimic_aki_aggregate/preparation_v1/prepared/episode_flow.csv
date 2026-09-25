@@ -1,0 +1,10 @@
+status,include_in_analysis,phenotype,reason_code,n_episodes,fraction_of_all_episodes
+labeled,True,persistent,no_sustained_recovery_within_window,20160,0.07730624547033718
+labeled,True,relapsing,sustained_recovery_then_recurrence,4986,0.01911949106721732
+labeled,True,transient,recovery_within_window_without_recurrence,6105,0.02341044784704407
+ambiguous,False,ambiguous,conflicting_simultaneous_values,458,0.001756262917927303
+censored,False,censored,follow_up_ends_before_required_horizon,23541,0.09027114705442497
+censored,False,censored,insufficient_post_onset_measurements,18768,0.07196843328309961
+censored,False,censored,measurement_gap_exceeds_configured_maximum,1749,0.006706776950774788
+no_aki,False,no_aki,insufficient_baseline_evidence,530,0.0020323566517499356
+no_aki,False,no_aki,no_aki_onset,184484,0.7074288387574248

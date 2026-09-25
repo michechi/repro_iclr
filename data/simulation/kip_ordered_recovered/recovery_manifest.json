@@ -1,0 +1,110 @@
+{
+  "created_utc": "2026-09-16T16:13:36.875113+00:00",
+  "method": "Exact inverse of historical deterministic per-row shuffle",
+  "shuffle_algorithm": "random.Random(f\"{seed}:{tag}:{split}:{row}\").shuffle(tokens)",
+  "shuffle_seed": 777,
+  "source_dir": "data/simulation/kip_shuffled",
+  "historical_ordered_dir": "data/simulation/tested",
+  "output_dir": "data/simulation/kip_ordered_recovered",
+  "python_version": "3.12.3",
+  "algorithm_evidence": {
+    "path": "repro/src/data/__pycache__/kip_shuffles.cpython-312.pyc",
+    "sha256": "cdec5bd45b73002ee7f6fd4c43c16180436d9d67e89a7e6ce8d0c5f102c5c9ec"
+  },
+  "recovery_script_sha256": "9a95f5231c2561f6377bde7a3fd42c696ff875465151bdc45d8847204ec8c456",
+  "source_files_sha256": {
+    "shuffle_manifest.json": "a0c3e61c52f109f08c670315d3e592cc5dc00b70f458040d113b052469cd211a",
+    "X_train_kip_m4.csv": "5e8ab7471359c2dd320e110a45e228b96a5e77b7d9230b216bc114a3b21edee0",
+    "y_train_kip_m4.csv": "43207f6dbb8aabe78c664547633ed20877226d29c78885751592c3379a573f74",
+    "X_val_kip_m4.csv": "3654c45c1aad015a4b442a1d4e8dd444990451f63ab937dfd18f7492af7211c2",
+    "y_val_kip_m4.csv": "e19473616d2d54a08e8b2814cb0a628698be5d45c4ba164fafd918cec1a9e84d",
+    "X_test_kip_m4.csv": "7af37147b80157311d6576c6ef423e1db3944ee0d090ad2d453a932a501a5369",
+    "y_test_kip_m4.csv": "bf501afa9f4803fdc1cef1b6f2aaa3b78968497abb15d7305c1ded0a5985c0ed",
+    "kip_m4_rule.json": "fca830c8c5054e4b43108cc33aede3b22f9ae283b0237a8818278ea77b4d2148",
+    "X_train_kip_m6.csv": "dcc5d6daa17aa28861039c9863c723a9a7bc681a716275f8fad003e2833ce219",
+    "y_train_kip_m6.csv": "26ca01c7e49831e6537dbd6e09e321e8e387927be4ea17cd4dcc7eeb9ed7a95f",
+    "X_val_kip_m6.csv": "1c06706f369e40a11988ddf7fb8bf87193b911051b1c508eeed303c88f3d4b05",
+    "y_val_kip_m6.csv": "d8da885e767afe39e8a3af1af4453d13dd23489c06228e01eadff1a5199e9565",
+    "X_test_kip_m6.csv": "979592051764cc9959ee984029684158aef0515772ad5b057d63f27e75b9c055",
+    "y_test_kip_m6.csv": "7e0493f7092443d6b533dd2aca4c604e7a805bbb11988e084dffff8d1a2db7c0",
+    "kip_m6_rule.json": "aed5aabd7d8ab401405e8c76d2c8bdd4a87c1d43a0dbf360e76f360f6ba00bf3"
+  },
+  "output_files_sha256": {
+    "X_train_kip_m4.csv": "c2437d0a6049737408fc3817d26046348ee83b68f8c68e77ca5badf8eacaa8f0",
+    "y_train_kip_m4.csv": "43207f6dbb8aabe78c664547633ed20877226d29c78885751592c3379a573f74",
+    "X_val_kip_m4.csv": "b1c51ead24c9a8a947c57eb26ae212ed1d4bf4db506644088c811bda915d9d5c",
+    "y_val_kip_m4.csv": "e19473616d2d54a08e8b2814cb0a628698be5d45c4ba164fafd918cec1a9e84d",
+    "X_test_kip_m4.csv": "2dc9478786e6ad5f2534e51c8a1587a5d109c7ec854a5d10db273cb1a3954b0f",
+    "y_test_kip_m4.csv": "bf501afa9f4803fdc1cef1b6f2aaa3b78968497abb15d7305c1ded0a5985c0ed",
+    "kip_m4_rule.json": "fca830c8c5054e4b43108cc33aede3b22f9ae283b0237a8818278ea77b4d2148",
+    "X_train_kip_m6.csv": "4cec892a6d313cf7827555ab852c773fea09b7eed292b60bf2ba625f102263c6",
+    "y_train_kip_m6.csv": "26ca01c7e49831e6537dbd6e09e321e8e387927be4ea17cd4dcc7eeb9ed7a95f",
+    "X_val_kip_m6.csv": "17ffb3c785fcb537bbd9f6ee92feefeb084c380b29c9eb5439fbdb7da136ed97",
+    "y_val_kip_m6.csv": "d8da885e767afe39e8a3af1af4453d13dd23489c06228e01eadff1a5199e9565",
+    "X_test_kip_m6.csv": "946f30bd01649a9c8bb304db68846df056072eba3e6194699565617a81bb4a6c",
+    "y_test_kip_m6.csv": "7e0493f7092443d6b533dd2aca4c604e7a805bbb11988e084dffff8d1a2db7c0",
+    "kip_m6_rule.json": "aed5aabd7d8ab401405e8c76d2c8bdd4a87c1d43a0dbf360e76f360f6ba00bf3"
+  },
+  "splits": {
+    "kip_m4/train": {
+      "rows": 400000,
+      "positive_labels": 199840,
+      "positive_rate": 0.4996,
+      "all_recovered_labels_match_rule": true,
+      "all_rows_forward_shuffle_match_source": true,
+      "forward_csv_sha256_matches_source": true,
+      "labels_byte_identical": true,
+      "shuffle_label_preservation_rate": 0.5000275
+    },
+    "kip_m4/val": {
+      "rows": 50000,
+      "positive_labels": 24910,
+      "positive_rate": 0.4982,
+      "all_recovered_labels_match_rule": true,
+      "all_rows_forward_shuffle_match_source": true,
+      "forward_csv_sha256_matches_source": true,
+      "labels_byte_identical": true,
+      "shuffle_label_preservation_rate": 0.49852
+    },
+    "kip_m4/test": {
+      "rows": 50000,
+      "positive_labels": 24903,
+      "positive_rate": 0.49806,
+      "all_recovered_labels_match_rule": true,
+      "all_rows_forward_shuffle_match_source": true,
+      "forward_csv_sha256_matches_source": true,
+      "labels_byte_identical": true,
+      "shuffle_label_preservation_rate": 0.50338
+    },
+    "kip_m6/train": {
+      "rows": 400000,
+      "positive_labels": 200098,
+      "positive_rate": 0.500245,
+      "all_recovered_labels_match_rule": true,
+      "all_rows_forward_shuffle_match_source": true,
+      "forward_csv_sha256_matches_source": true,
+      "labels_byte_identical": true,
+      "shuffle_label_preservation_rate": 0.5009325
+    },
+    "kip_m6/val": {
+      "rows": 50000,
+      "positive_labels": 24991,
+      "positive_rate": 0.49982,
+      "all_recovered_labels_match_rule": true,
+      "all_rows_forward_shuffle_match_source": true,
+      "forward_csv_sha256_matches_source": true,
+      "labels_byte_identical": true,
+      "shuffle_label_preservation_rate": 0.4981
+    },
+    "kip_m6/test": {
+      "rows": 50000,
+      "positive_labels": 25045,
+      "positive_rate": 0.5009,
+      "all_recovered_labels_match_rule": true,
+      "all_rows_forward_shuffle_match_source": true,
+      "forward_csv_sha256_matches_source": true,
+      "labels_byte_identical": true,
+      "shuffle_label_preservation_rate": 0.49872
+    }
+  }
+}

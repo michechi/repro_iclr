@@ -1,0 +1,14 @@
+{
+  "attention_oc_profiles_20260925.csv": {
+    "sha256": "96c61434766e4a34a327550f81661f7c45736715d3de7ff76217da6d91530456",
+    "aggregate_rows": 264
+  },
+  "attention_kip_m4_profiles_20260925.csv": {
+    "sha256": "5f54a1f2aa4cce6e736fac3d25a45ae92b91294646c59274ee8a0e83d8454894",
+    "aggregate_rows": 448
+  },
+  "attention_ckd_profiles_20260925.csv": {
+    "sha256": "75467e10c9140e560d0f9bb121346084edbd737833dba64653017e4988165b2e",
+    "aggregate_rows": 144
+  }
+}

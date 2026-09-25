@@ -1,0 +1,54 @@
+{
+  "method": "Independent exact regeneration using original historical KIP generator bytecode; compare all recovered rows and labels",
+  "generator_bytecode_sha256": "ca26d4b4c66f6e3163ad5a680b1614bde0d1064207e7128c38c0ceeb555fc8a0",
+  "splits": {
+    "kip_m4/train": {
+      "rows": 400000,
+      "independent_generator_byte_identical": true,
+      "csv_sha256": {
+        "X_train_kip_m4.csv": "c2437d0a6049737408fc3817d26046348ee83b68f8c68e77ca5badf8eacaa8f0",
+        "y_train_kip_m4.csv": "43207f6dbb8aabe78c664547633ed20877226d29c78885751592c3379a573f74"
+      }
+    },
+    "kip_m4/val": {
+      "rows": 50000,
+      "independent_generator_byte_identical": true,
+      "csv_sha256": {
+        "X_val_kip_m4.csv": "b1c51ead24c9a8a947c57eb26ae212ed1d4bf4db506644088c811bda915d9d5c",
+        "y_val_kip_m4.csv": "e19473616d2d54a08e8b2814cb0a628698be5d45c4ba164fafd918cec1a9e84d"
+      }
+    },
+    "kip_m4/test": {
+      "rows": 50000,
+      "independent_generator_byte_identical": true,
+      "csv_sha256": {
+        "X_test_kip_m4.csv": "2dc9478786e6ad5f2534e51c8a1587a5d109c7ec854a5d10db273cb1a3954b0f",
+        "y_test_kip_m4.csv": "bf501afa9f4803fdc1cef1b6f2aaa3b78968497abb15d7305c1ded0a5985c0ed"
+      }
+    },
+    "kip_m6/train": {
+      "rows": 400000,
+      "independent_generator_byte_identical": true,
+      "csv_sha256": {
+        "X_train_kip_m6.csv": "4cec892a6d313cf7827555ab852c773fea09b7eed292b60bf2ba625f102263c6",
+        "y_train_kip_m6.csv": "26ca01c7e49831e6537dbd6e09e321e8e387927be4ea17cd4dcc7eeb9ed7a95f"
+      }
+    },
+    "kip_m6/val": {
+      "rows": 50000,
+      "independent_generator_byte_identical": true,
+      "csv_sha256": {
+        "X_val_kip_m6.csv": "17ffb3c785fcb537bbd9f6ee92feefeb084c380b29c9eb5439fbdb7da136ed97",
+        "y_val_kip_m6.csv": "d8da885e767afe39e8a3af1af4453d13dd23489c06228e01eadff1a5199e9565"
+      }
+    },
+    "kip_m6/test": {
+      "rows": 50000,
+      "independent_generator_byte_identical": true,
+      "csv_sha256": {
+        "X_test_kip_m6.csv": "946f30bd01649a9c8bb304db68846df056072eba3e6194699565617a81bb4a6c",
+        "y_test_kip_m6.csv": "7e0493f7092443d6b533dd2aca4c604e7a805bbb11988e084dffff8d1a2db7c0"
+      }
+    }
+  }
+}

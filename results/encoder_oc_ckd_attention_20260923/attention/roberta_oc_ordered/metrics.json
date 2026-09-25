@@ -1,0 +1,59 @@
+{
+  "attention_readout": "CLS token 0",
+  "capture_probability_delta": 0.0,
+  "causal": false,
+  "condition": "ordered",
+  "counterfactuals": {
+    "count_matched_label_flip": {
+      "accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 0.9996135850009651,
+      "prediction_flip_rate": 1.0,
+      "samples": 192
+    },
+    "distractor_swap": {
+      "accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 7.540084766333166e-08,
+      "prediction_flip_rate": 0.0,
+      "samples": 200
+    },
+    "random_shuffle": {
+      "accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 0.3199962014754988,
+      "prediction_flip_rate": 0.32,
+      "samples": 200
+    }
+  },
+  "full_test_reference": {
+    "accuracy": 0.99976,
+    "auc": 0.9999996060231224,
+    "auroc": 0.9999996060231224,
+    "average_precision": 0.9999990357640479,
+    "f1": 0.999588590235875,
+    "loss": 0.0007063170766830444,
+    "positive_rows": 14585,
+    "precision": 0.999657135020229,
+    "recall": 0.9995200548508741,
+    "rows": 50000,
+    "threshold": 0.8199999999999996
+  },
+  "is_smoke": false,
+  "max_reference_probability_error": 2.9394531253501555e-08,
+  "mean_reference_probability_error": 2.1483037412329663e-09,
+  "model": "roberta",
+  "sample_metrics": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "auroc": 1.0,
+    "average_precision": 0.9999999999999999,
+    "f1": 1.0,
+    "positive_rows": 292,
+    "precision": 1.0,
+    "recall": 1.0,
+    "rows": 1000,
+    "threshold": 0.5
+  },
+  "samples": 1000,
+  "status": "completed",
+  "task": "oc",
+  "wall_seconds": 21.6503223819891
+}

@@ -1,0 +1,86 @@
+{
+  "best_epoch": 3,
+  "best_validation": {
+    "accuracy": 0.49992,
+    "auc": 0.505031211852045,
+    "confusion_matrix": [
+      [
+        5,
+        25004
+      ],
+      [
+        0,
+        24991
+      ]
+    ],
+    "f1": 0.6665510895367135,
+    "fn": 0,
+    "fp": 25004,
+    "loss": 0.6932338492734038,
+    "n": 50000,
+    "positives": 24991,
+    "precision": 0.4998699869986999,
+    "recall": 1.0,
+    "tn": 5,
+    "tp": 24991
+  },
+  "elapsed_seconds": 443.0318041270366,
+  "epochs_completed": 8,
+  "global_steps": 50000,
+  "is_smoke": false,
+  "manifest_sha256": "bfd469247d83e0e8df3d827b35c0a9b54076661f16844c8d21b1bac0f5b54ec4",
+  "metrics_verified_from_saved_predictions": true,
+  "mode": "ordered",
+  "model": "RNNTransformer",
+  "n_test": 50000,
+  "n_train": 400000,
+  "n_val": 50000,
+  "peak_gpu_allocated_bytes": 137741824,
+  "peak_gpu_reserved_bytes": 180355072,
+  "prediction_sha256": "0ceb55c371c3e3cf61ebe6d6a54366a10b1b6b411f794f0626c726e6a99aff63",
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "seed": 9552,
+  "selected_by": "validation_f1",
+  "status": "completed",
+  "stop_reason": "validation_patience",
+  "tag": "kip_m6",
+  "test": {
+    "accuracy": 0.5009,
+    "auc": 0.4998707355811833,
+    "confusion_matrix": [
+      [
+        1,
+        24954
+      ],
+      [
+        1,
+        25044
+      ]
+    ],
+    "f1": 0.6674573244673054,
+    "fn": 1,
+    "fp": 24954,
+    "loss": 0.6932075787353975,
+    "n": 50000,
+    "positives": 25045,
+    "precision": 0.5009000360014401,
+    "recall": 0.9999600718706328,
+    "tn": 1,
+    "tp": 25044
+  },
+  "test_accuracy": 0.5009,
+  "test_auc": 0.4998707355811833,
+  "test_f1": 0.6674573244673054,
+  "test_informed_stopping": false,
+  "test_loss": 0.6932075787353975,
+  "test_precision": 0.5009000360014401,
+  "test_recall": 0.9999600718706328,
+  "threshold_protocol": "argmax",
+  "train_fraction": 1.0,
+  "trainable_parameters": 82498,
+  "tuning": "from_scratch_all_parameters"
+}

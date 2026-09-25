@@ -1,0 +1,7 @@
+binarization_threshold: 0.5
+
+# Patient-level splits
+split_seed: 2026
+train_frac: 0.70
+val_frac: 0.15
+test_frac: 0.15

@@ -1,0 +1,7 @@
+tag,seed,test_auc,source,precision
+kip_m4,9550,0.5002,logs/kip/BERT_kip_m4_ordered_9550.log,four-decimal historical log
+kip_m4,9551,0.5008893733889828,results/kip_bert_repeats_20260918/runs/kip_m4/seed9551/metrics.json,saved-prediction full precision
+kip_m4,9552,0.5002575190767952,results/kip_bert_repeats_20260918/runs/kip_m4/seed9552/metrics.json,saved-prediction full precision
+kip_m6,9550,0.5019,logs/kip/BERT_kip_m6_ordered_9550.log,four-decimal historical log
+kip_m6,9551,0.49494994923783553,results/kip_bert_repeats_20260918/runs/kip_m6/seed9551/metrics.json,saved-prediction full precision
+kip_m6,9552,0.504393526235025,results/kip_bert_repeats_20260918/runs/kip_m6/seed9552/metrics.json,saved-prediction full precision

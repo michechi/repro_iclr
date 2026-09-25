@@ -1,0 +1,58 @@
+{
+  "counterfactuals": {
+    "count_matched_label_flip": {
+      "clean_accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 0.9999930375609489,
+      "prediction_flip_rate": 1.0,
+      "samples": 192
+    },
+    "distractor_swap": {
+      "clean_accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 5.98543727506895e-07,
+      "prediction_flip_rate": 0.0,
+      "samples": 200
+    },
+    "random_shuffle": {
+      "clean_accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 0.32000088189305353,
+      "prediction_flip_rate": 0.32,
+      "samples": 200
+    }
+  },
+  "full_test_reference": {
+    "accuracy": 0.99998,
+    "auc": 0.9999999980639958,
+    "f1": 0.9999657193788352,
+    "loss": 4.317133664695575e-05,
+    "precision": 0.9999314411079117,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "max_reference_probability_error": 2.827758793788604e-08,
+  "mean_reference_probability_error": 2.3115639968641896e-09,
+  "physical_layer_ids": [
+    3,
+    7,
+    11,
+    15,
+    19,
+    23,
+    27,
+    31,
+    35,
+    39,
+    43,
+    47,
+    51,
+    55,
+    59,
+    63
+  ],
+  "sample_clean_auc": 1.0,
+  "sample_observed_ap": 1.0,
+  "sample_observed_auc": 1.0,
+  "samples": 1000,
+  "status": "completed",
+  "tag": "ocdet",
+  "wall_seconds": 470.2399001059821
+}

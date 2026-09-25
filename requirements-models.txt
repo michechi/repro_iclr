@@ -1,0 +1,14 @@
+-r requirements.txt
+# New decoder/hybrid models need a Transformers version supporting their config.
+transformers>=5.14.1
+peft>=0.19.1
+accelerate>=1.14.0
+huggingface-hub>=1.24.0
+safetensors>=0.8.0
+bitsandbytes>=0.50.2
+datasets>=2.14
+sentencepiece>=0.2
+# Optional fast kernels used by the recorded Qwen3.8 few-shot runs
+# (see docs/qwen38_fewshot_20260918.md); not needed by the documented entry points:
+# fla-core==0.5.2
+# einops==0.8.2

@@ -1,0 +1,4 @@
+admission_censor_annotation_status,admission_censor_reason,n_episodes,fraction_of_censored_episodes
+attributed,death_before_required_horizon,4756,0.10794861319170185
+attributed,discharge_before_required_horizon,36485,0.8281129420309592
+not_attributed,administrative_endpoint_after_required_horizon,2817,0.06393844477733897

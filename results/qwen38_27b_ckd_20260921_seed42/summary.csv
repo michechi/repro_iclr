@@ -1,0 +1,3 @@
+data,seed,status,test_auc,test_auprc,test_f1,best_epoch,epochs_completed,metrics_path
+ordered,42,completed,0.785470366690838,0.28303884950476005,0.3241252302025783,10,15,results/qwen38_27b_ckd_20260921_seed42/ordered/attempt_001/metrics.json
+shuffled,42,completed,0.7809326514248841,0.30689664483326307,0.3389121338912134,10,15,results/qwen38_27b_ckd_20260921_seed42/shuffled/attempt_001/metrics.json

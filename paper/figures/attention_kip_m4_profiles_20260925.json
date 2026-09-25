@@ -1,0 +1,28 @@
+{
+  "aggregation": "equal-head mean of saved per-example mass/uniform-baseline ratios",
+  "condition": "all",
+  "generator_sha256": "882132b83f3725747e6e1a708026b18443aded120e420579d3ee471e58a64857",
+  "layer_numbering": "source zero-based physical indices plus one",
+  "limitations": "descriptive selected-checkpoint comparison; differing data sizes/recipes; overlapping target categories; original eager/native methods retained",
+  "samples": 1000,
+  "scope": "replot only; no new training or inference",
+  "selection": "all four audited M4 checkpoints with reference full-test AUROC exactly 1",
+  "sources": [
+    {
+      "directory": "results/kip_checkpoint_attention_20260922/jobs/llama1b_full_kip_m4",
+      "job": "llama1b_full_kip_m4"
+    },
+    {
+      "directory": "results/kip_checkpoint_attention_20260922/jobs/llama8b_lora_m4_0.50",
+      "job": "llama8b_lora_m4_0.50"
+    },
+    {
+      "directory": "results/kip_checkpoint_attention_20260922/jobs/qwen14b_qlora_m4_0.50",
+      "job": "qwen14b_qlora_m4_0.50"
+    },
+    {
+      "directory": "results/kip_checkpoint_attention_20260922/jobs/qwen27b_qlora_m4_0.50",
+      "job": "qwen27b_qlora_m4_0.50"
+    }
+  ]
+}

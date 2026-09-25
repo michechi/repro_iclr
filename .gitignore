@@ -1,0 +1,35 @@
+# Local environments, generated runs, weights and credentials
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.cache/
+.env
+.env.*
+!.env.example
+/runs/
+wandb/
+*.log
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.npz
+*.pkl
+*.pickle
+hf_cache/
+model_cache/
+# Clinical inputs stay outside the release
+/data/processed/
+/data/raw/
+/mimic_analysis/data/
+# LaTeX build artifacts
+*.aux
+*.toc
+*.out
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk

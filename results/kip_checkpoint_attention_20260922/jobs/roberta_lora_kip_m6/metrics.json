@@ -1,0 +1,45 @@
+{
+  "capture": "diagnostic Q/K softmax; native SDPA model outputs unchanged",
+  "causal": false,
+  "counterfactuals": {
+    "distractor_swap": {
+      "accuracy_at_0_5": 0.495,
+      "mean_absolute_probability_change": 0.00027341634035110473,
+      "prediction_flip_rate": 0.0,
+      "samples": 200
+    },
+    "key_swap": {
+      "accuracy_at_0_5": 0.505,
+      "mean_absolute_probability_change": 0.00018553495407104493,
+      "prediction_flip_rate": 0.0,
+      "samples": 200
+    }
+  },
+  "evaluation": "original reference batch membership and DynamicPadding multiple=8",
+  "full_test_auc_reference": 0.5007117519060762,
+  "is_smoke": false,
+  "key": "roberta_lora_kip_m6",
+  "layer_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "max_reference_probability_error": 2.7895355247942177e-08,
+  "mean_reference_probability_error": 1.0546794271149018e-08,
+  "sample_accuracy_at_0_5": 0.501,
+  "sample_ap": 0.510458686874016,
+  "sample_auc": 0.5062200248800995,
+  "samples": 1000,
+  "status": "completed",
+  "tag": "kip_m6",
+  "wall_seconds": 25.098241021012655
+}

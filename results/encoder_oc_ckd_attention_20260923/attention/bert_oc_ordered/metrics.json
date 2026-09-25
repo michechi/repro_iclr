@@ -1,0 +1,59 @@
+{
+  "attention_readout": "CLS token 0",
+  "capture_probability_delta": 0.0,
+  "causal": false,
+  "condition": "ordered",
+  "counterfactuals": {
+    "count_matched_label_flip": {
+      "accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 0.9999960881623426,
+      "prediction_flip_rate": 1.0,
+      "samples": 192
+    },
+    "distractor_swap": {
+      "accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 2.36402075870501e-08,
+      "prediction_flip_rate": 0.0,
+      "samples": 200
+    },
+    "random_shuffle": {
+      "accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 0.3199989659511118,
+      "prediction_flip_rate": 0.32,
+      "samples": 200
+    }
+  },
+  "full_test_reference": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "auroc": 1.0,
+    "average_precision": 1.0,
+    "f1": 1.0,
+    "loss": 1.75656795501709e-06,
+    "positive_rows": 14585,
+    "precision": 1.0,
+    "recall": 1.0,
+    "rows": 50000,
+    "threshold": 0.1
+  },
+  "is_smoke": false,
+  "max_reference_probability_error": 2.6557922416792223e-08,
+  "mean_reference_probability_error": 3.0404761454036926e-09,
+  "model": "bert",
+  "sample_metrics": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "auroc": 1.0,
+    "average_precision": 1.0,
+    "f1": 1.0,
+    "positive_rows": 292,
+    "precision": 1.0,
+    "recall": 1.0,
+    "rows": 1000,
+    "threshold": 0.5
+  },
+  "samples": 1000,
+  "status": "completed",
+  "task": "oc",
+  "wall_seconds": 21.591183296986856
+}

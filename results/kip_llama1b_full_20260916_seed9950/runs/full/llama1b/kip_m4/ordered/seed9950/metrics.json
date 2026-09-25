@@ -1,0 +1,75 @@
+{
+  "best_epoch": 15,
+  "best_model": "results/kip_llama1b_full_20260916_seed9950/runs/full/llama1b/kip_m4/ordered/seed9950/best_model",
+  "checkpoint_policy": "selected_model_only; interrupted unfinished run must restart",
+  "early_stopped": true,
+  "epochs_completed": 18,
+  "is_smoke": false,
+  "manifest": "results/kip_llama1b_full_20260916_seed9950/runs/full/llama1b/kip_m4/ordered/seed9950/manifest.json",
+  "mode": "ordered",
+  "model_name": "meta-llama/Llama-3.2-1B",
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "shuffled_test": {
+    "accuracy": 0.50338,
+    "auc": 0.5052681497088329,
+    "f1": 0.5015356820234869,
+    "loss": 13.085131876220704,
+    "precision": 0.5014450867052023,
+    "recall": 0.5016263100831225,
+    "threshold": 0.1
+  },
+  "shuffled_test_at_0_5": {
+    "accuracy": 0.50338,
+    "auc": 0.5052681497088329,
+    "f1": 0.5015356820234869,
+    "precision": 0.5014450867052023,
+    "recall": 0.5016263100831225,
+    "threshold": 0.5
+  },
+  "tag": "kip_m4",
+  "test": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "loss": 9.536742595628312e-12,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "threshold_selected_on": "validation",
+  "training_seconds": 4411.636717074001,
+  "tuning": "full",
+  "validation": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "loss": 2.384185648907078e-12,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "wall_seconds_this_process": 4472.355800497
+}

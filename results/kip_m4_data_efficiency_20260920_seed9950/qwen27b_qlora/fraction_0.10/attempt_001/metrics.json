@@ -1,0 +1,58 @@
+{
+  "arm": "qwen27b_qlora",
+  "best_epoch": 2,
+  "checkpoint_policy": "selected trainable adapter/head saved; full weights CPU RAM only; unfinished fit restarts",
+  "early_stopped": true,
+  "epochs_completed": 5,
+  "fraction": 0.1,
+  "is_smoke": false,
+  "mode": "ordered",
+  "rows": {
+    "test": 50000,
+    "train": 40000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "selected_weights_saved": true,
+  "status": "completed",
+  "tag": "kip_m4",
+  "test": {
+    "accuracy": 0.49808,
+    "auc": 0.4953126430346533,
+    "f1": 0.664948866518918,
+    "loss": 0.6970160022735595,
+    "precision": 0.498069961399228,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 0.49634,
+    "auc": 0.4953126430346533,
+    "f1": 0.45969662511532106,
+    "precision": 0.4935501704597807,
+    "recall": 0.43018913383929647,
+    "threshold": 0.5
+  },
+  "threshold_selected_on": "validation",
+  "training_seconds": 3282.5838923190004,
+  "validation": {
+    "accuracy": 0.4982,
+    "auc": 0.5028778852973934,
+    "f1": 0.6650647443598986,
+    "loss": 0.6958787035751343,
+    "precision": 0.4982,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.50174,
+    "auc": 0.5028778852973934,
+    "f1": 0.46610805134689154,
+    "precision": 0.49993104399393185,
+    "recall": 0.4365716579686873,
+    "threshold": 0.5
+  },
+  "wall_seconds": 3638.4990475460004
+}

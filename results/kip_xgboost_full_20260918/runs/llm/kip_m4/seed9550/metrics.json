@@ -1,0 +1,17 @@
+{
+  "best_iteration": 13,
+  "best_validation_logloss": 0.6929998417258263,
+  "elapsed_seconds": 28.843138501000794,
+  "encoding": "llm",
+  "fitted_rounds": 24,
+  "model_reload_check": "passed",
+  "n_test": 50000,
+  "n_train": 400000,
+  "n_val": 50000,
+  "seed": 9550,
+  "smoke": false,
+  "tag": "kip_m4",
+  "test_accuracy_at_half": 0.50316,
+  "test_auc": 0.5059894781680001,
+  "test_f1_at_half": 0.5166173723536738
+}

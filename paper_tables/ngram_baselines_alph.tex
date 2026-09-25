@@ -1,0 +1,17 @@
+\begin{table}
+\caption{Performance of n-gram baseline classifiers, including unigram baseline.}
+\label{tab:ngram_baselines}
+\begin{tabular}{lrrrr}
+\toprule
+Model & AUC & F1 (thr=0.5) & Best F1 & Best threshold \\
+\midrule
+1-gram (unigram) & 0.4926 & 0.5932 & 0.6665 & 0.0000 \\
+2-gram & 0.9534 & 0.9522 & 0.9522 & 0.5000 \\
+3-gram & 0.9516 & 0.9160 & 0.9457 & 0.5100 \\
+4-gram & 0.9465 & 0.9087 & 0.9428 & 0.5200 \\
+5-gram & 0.9249 & 0.8827 & 0.9120 & 0.5300 \\
+6-gram & 0.8326 & 0.7857 & 0.8190 & 0.5400 \\
+7-gram & 0.5725 & 0.6616 & 0.6666 & 0.3100 \\
+\bottomrule
+\end{tabular}
+\end{table}

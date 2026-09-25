@@ -1,0 +1,70 @@
+{
+  "arm": "qwen27b_qlora",
+  "best_epoch": 5,
+  "checkpoint_policy": "selected trainable adapter/head saved; full weights CPU RAM only; unfinished fit restarts",
+  "early_stopped": true,
+  "epochs_completed": 6,
+  "finalization_seconds": 377.7177046199795,
+  "fraction": 1.0,
+  "is_smoke": false,
+  "learning_rate_schedule": "original schedule preserved through epoch cap",
+  "mode": "ordered",
+  "original_max_epochs": 20,
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "selected_weights_saved": true,
+  "status": "completed",
+  "stop_reason": "user_epoch_cap",
+  "stopping_rule": "user_requested_epoch_cap",
+  "tag": "ocdet",
+  "test": {
+    "accuracy": 0.99998,
+    "auc": 0.9999999980639958,
+    "f1": 0.9999657193788352,
+    "loss": 4.317133664695575e-05,
+    "precision": 0.9999314411079117,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 0.99998,
+    "auc": 0.9999999980639958,
+    "f1": 0.9999657193788352,
+    "precision": 0.9999314411079117,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "test_informed_stopping": false,
+  "threshold_selected_on": "validation",
+  "training_seconds": 30569.956288796995,
+  "user_epoch_cap": 6,
+  "user_stop_record_sha256": "f4bb4878291ba002caac8236e8fc2cdfa3c63679c99f0d05ede7ac4f3001c3b6",
+  "validation": {
+    "accuracy": 0.99998,
+    "auc": 0.9999999961281474,
+    "f1": 0.9999657193788352,
+    "loss": 9.170350355940172e-05,
+    "precision": 1.0,
+    "recall": 0.9999314411079117,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.99998,
+    "auc": 0.9999999961281474,
+    "f1": 0.9999657193788352,
+    "precision": 1.0,
+    "recall": 0.9999314411079117,
+    "threshold": 0.5
+  },
+  "validation_reproduction": {
+    "auc_absolute_error": 0.0,
+    "loss_absolute_error": 0.0
+  },
+  "wall_seconds": 30980.04332519695
+}

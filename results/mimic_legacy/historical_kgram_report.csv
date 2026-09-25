@@ -1,0 +1,8 @@
+k,reported_vocabulary_size,token_coverage_percent_mean,token_coverage_percent_sd,type_coverage_percent_mean,type_coverage_percent_sd,auc_mean,auc_sd,f1_mean,f1_sd,random_splits,train_fraction,test_fraction,metric_precision,evidence
+1,291,100.0,0.0,99.3,0.4,0.823,0.015,0.356,0.013,5,0.8,0.2,rounded_historical_report,sanitized_derivative_of_retained_aggregate_report
+2,33924,99.0,0.0,91.0,0.3,0.801,0.016,0.341,0.017,5,0.8,0.2,rounded_historical_report,sanitized_derivative_of_retained_aggregate_report
+3,378170,72.5,0.2,55.5,0.2,0.576,0.015,0.165,0.006,5,0.8,0.2,rounded_historical_report,sanitized_derivative_of_retained_aggregate_report
+4,773116,24.7,0.3,18.5,0.2,0.500,0.018,0.146,0.002,5,0.8,0.2,rounded_historical_report,sanitized_derivative_of_retained_aggregate_report
+5,895168,5.2,0.1,4.2,0.1,0.479,0.015,0.145,0.001,5,0.8,0.2,rounded_historical_report,sanitized_derivative_of_retained_aggregate_report
+6,910196,0.9,0.0,0.7,0.0,0.482,0.016,0.144,0.000,5,0.8,0.2,rounded_historical_report,sanitized_derivative_of_retained_aggregate_report
+7,902672,0.1,0.0,0.1,0.0,0.492,0.012,0.144,0.000,5,0.8,0.2,rounded_historical_report,sanitized_derivative_of_retained_aggregate_report

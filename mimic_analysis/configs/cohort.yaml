@@ -1,0 +1,21 @@
+min_anchor_age: 18
+require_hadm_id: true
+min_retained_notes_per_patient: 2
+
+# Regex -> modality group, applied case-insensitively to radiology_detail.exam_name.
+# First match wins; anything unmatched is "OTHER".
+modality_map:
+  - pattern: '\bpet\b'
+    group: PET
+  - pattern: '\bct\b'
+    group: CT
+  - pattern: '\bmri?\b|magnetic resonance'
+    group: MR
+  - pattern: '\bnm\b|nuclear|bone scan'
+    group: NM
+  - pattern: '\bmammo'
+    group: MAMMO
+  - pattern: '\bxr\b|x-ray|radiograph|chest film'
+    group: XR
+  - pattern: '\bus\b|ultrasound|sonogram'
+    group: US

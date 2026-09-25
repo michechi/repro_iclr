@@ -1,0 +1,20 @@
+{
+  "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  "kappa": {
+    "A": 4,
+    "C": 1,
+    "O": 2,
+    "T": 3
+  },
+  "key_letters_in_kappa_order": [
+    "C",
+    "O",
+    "T",
+    "A"
+  ],
+  "m": 4,
+  "n": 20,
+  "seed": 959697,
+  "tag": "kip_m4",
+  "task": "KIP"
+}

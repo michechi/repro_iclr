@@ -1,0 +1,14 @@
+License scope
+=============
+
+The nested repro/ package retains its existing MIT license in repro/LICENSE.
+That notice applies to the work covered by that original license.
+
+No additional blanket license is asserted here for the remaining source,
+manuscript, exported figures, third-party mappings, datasets or model weights.
+Their applicable rights and terms remain with the respective holders. Model
+weights and restricted clinical data are not included. The source project did
+not provide a root-wide license; this release preserves that status instead of
+assigning a new license on behalf of the authors.
+
+See NOTICE.md for included third-party material and provenance.

@@ -1,0 +1,8 @@
+# Historical clinical aggregates
+
+These files are sanitized derivatives of retained historical CKD-to-ESRD evidence. No patient-level record, sequence, prediction, split index, or raw log is distributed.
+
+- `historical_neural_metrics.csv`: eight completed final-test evaluations, one ordered and one shuffled run for BERT, BiLSTM, LSTM and Transformer. Values are copied from the unique final-test metric line and preceding validation-threshold line of each retained completed training log. Test metrics have four-decimal logged precision. Source-log SHA256 digests provide provenance without exposing operational log text or filenames containing scheduler IDs. The seed was not stated in those retained logs and is not inferred. The original referenced `model_results.csv` is absent. LSTM's near-chance values are completed evaluations, not successful learning or an execution failure.
+- `historical_kgram_report.csv`: seven k-gram rows transcribed from the existing aggregate clinical report. It reports five random 80/20 splits and rounded mean/SD values. Per-split metrics and underlying predictions are unavailable, so these summary values have not been independently recomputed. Vocabulary sizes are the report's displayed values; no additional averaging definition is inferred.
+
+These historical fits are distinct from the newer encoder/Llama/Qwen clinical attention fits. The historical shuffled condition's placement is not fully established by these aggregate lines. Neither a small ordered-minus-shuffled difference nor a single run supplies a significance test or proves clinical order invariance.

@@ -1,0 +1,24 @@
+# Tool configuration for the release root. Runtime dependencies are listed in
+# requirements.txt, requirements-models.txt and requirements-dev.txt; this file
+# is not an installable package definition. The nested repro/ package has its own
+# pyproject.toml and must be installed from that directory.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]
+addopts = "-ra"
+markers = [
+    "slow: integration tests that train optional neural/XGBoost models",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]

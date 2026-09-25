@@ -1,0 +1,309 @@
+code_chapter,category_code,L2code,category_desc
+Infectious and parasitic diseases,1,1.1,Tuberculosis
+Infectious and parasitic diseases,2,1.1,Septicemia (except in labor)
+Infectious and parasitic diseases,3,1.1,Bacterial infection; unspecified site
+Infectious and parasitic diseases,4,1.2,Mycoses
+Infectious and parasitic diseases,5,1.3,HIV infection
+Infectious and parasitic diseases,6,1.3,Hepatitis
+Infectious and parasitic diseases,7,1.3,Viral infection
+Infectious and parasitic diseases,8,1.4,Other infections; including parasitic
+Infectious and parasitic diseases,9,1.1,Sexually transmitted infections (not HIV or hepatitis)
+Infectious and parasitic diseases,10,1.5,Immunizations and screening for infectious disease
+Neoplasms,11,2.11,Cancer of head and neck
+Neoplasms,12,2.2,Cancer of esophagus
+Neoplasms,13,2.2,Cancer of stomach
+Neoplasms,14,2.1,Cancer of colon
+Neoplasms,15,2.1,Cancer of rectum and anus
+Neoplasms,16,2.2,Cancer of liver and intrahepatic bile duct
+Neoplasms,17,2.2,Cancer of pancreas
+Neoplasms,18,2.2,Cancer of other GI organs; peritoneum
+Neoplasms,19,2.3,Cancer of bronchus; lung
+Neoplasms,20,2.11,Cancer; other respiratory and intrathoracic
+Neoplasms,21,2.11,Cancer of bone and connective tissue
+Neoplasms,22,2.4,Melanomas of skin
+Neoplasms,23,2.4,Other non-epithelial cancer of skin
+Neoplasms,24,2.5,Cancer of breast
+Neoplasms,25,2.6,Cancer of uterus
+Neoplasms,26,2.6,Cancer of cervix
+Neoplasms,27,2.7,Cancer of ovary
+Neoplasms,28,2.7,Cancer of other female genital organs
+Neoplasms,29,2.8,Cancer of prostate
+Neoplasms,30,2.8,Cancer of testis
+Neoplasms,31,2.8,Cancer of other male genital organs
+Neoplasms,32,2.9,Cancer of bladder
+Neoplasms,33,2.9,Cancer of kidney and renal pelvis
+Neoplasms,34,2.9,Cancer of other urinary organs
+Neoplasms,35,2.11,Cancer of brain and nervous system
+Neoplasms,36,2.11,Cancer of thyroid
+Neoplasms,37,2.10,Hodgkin`s disease
+Neoplasms,38,2.10,Non-Hodgkin`s lymphoma
+Neoplasms,39,2.10,Leukemias
+Neoplasms,40,2.10,Multiple myeloma
+Neoplasms,41,2.11,Cancer; other and unspecified primary
+Neoplasms,42,2.12,Secondary malignancies
+Neoplasms,43,2.13,Malignant neoplasm without specification of site
+Neoplasms,44,2.14,Neoplasms of unspecified nature or uncertain behavior
+Neoplasms,45,2.15,Maintenance chemotherapy; radiotherapy
+Neoplasms,46,2.16,Benign neoplasm of uterus
+Neoplasms,47,2.16,Other and unspecified benign neoplasm
+Endocrine; nutritional; and metabolic diseases and immunity disorders,48,3.1,Thyroid disorders
+Endocrine; nutritional; and metabolic diseases and immunity disorders,49,3.2,Diabetes mellitus without complication
+Endocrine; nutritional; and metabolic diseases and immunity disorders,50,3.3,Diabetes mellitus with complications
+Endocrine; nutritional; and metabolic diseases and immunity disorders,51,3.4,Other endocrine disorders
+Endocrine; nutritional; and metabolic diseases and immunity disorders,52,3.5,Nutritional deficiencies
+Endocrine; nutritional; and metabolic diseases and immunity disorders,53,3.6,Disorders of lipid metabolism
+Endocrine; nutritional; and metabolic diseases and immunity disorders,54,3.7,Gout and other crystal arthropathies
+Endocrine; nutritional; and metabolic diseases and immunity disorders,55,3.8,Fluid and electrolyte disorders
+Endocrine; nutritional; and metabolic diseases and immunity disorders,56,3.9,Cystic fibrosis
+Endocrine; nutritional; and metabolic diseases and immunity disorders,57,3.10,Immunity disorders
+Endocrine; nutritional; and metabolic diseases and immunity disorders,58,3.11,Other nutritional; endocrine; and metabolic disorders
+Diseases of the blood and blood-forming organs,59,4.1,Deficiency and other anemia
+Diseases of the blood and blood-forming organs,60,4.1,Acute posthemorrhagic anemia
+Diseases of the blood and blood-forming organs,61,4.1,Sickle cell anemia
+Diseases of the blood and blood-forming organs,62,4.2,Coagulation and hemorrhagic disorders
+Diseases of the blood and blood-forming organs,63,4.3,Diseases of white blood cells
+Diseases of the blood and blood-forming organs,64,4.4,Other hematologic conditions
+Diseases of the nervous system and sense organs,76,6.1,Meningitis (except that caused by tuberculosis or sexually transmitted disease)
+Diseases of the nervous system and sense organs,77,6.1,Encephalitis (except that caused by tuberculosis or sexually transmitted disease)
+Diseases of the nervous system and sense organs,78,6.1,Other CNS infection and poliomyelitis
+Diseases of the nervous system and sense organs,79,6.2,Parkinson`s disease
+Diseases of the nervous system and sense organs,80,6.2,Multiple sclerosis
+Diseases of the nervous system and sense organs,81,6.2,Other hereditary and degenerative nervous system conditions
+Diseases of the nervous system and sense organs,82,6.3,Paralysis
+Diseases of the nervous system and sense organs,83,6.4,Epilepsy; convulsions
+Diseases of the nervous system and sense organs,84,6.5,Headache; including migraine
+Diseases of the nervous system and sense organs,85,6.6,Coma; stupor; and brain damage
+Diseases of the nervous system and sense organs,86,6.7,Cataract
+Diseases of the nervous system and sense organs,87,6.7,Retinal detachments; defects; vascular occlusion; and retinopathy
+Diseases of the nervous system and sense organs,88,6.7,Glaucoma
+Diseases of the nervous system and sense organs,89,6.7,Blindness and vision defects
+Diseases of the nervous system and sense organs,90,6.7,Inflammation; infection of eye (except that caused by tuberculosis or sexually transmitteddisease)
+Diseases of the nervous system and sense organs,91,6.7,Other eye disorders
+Diseases of the nervous system and sense organs,92,6.8,Otitis media and related conditions
+Diseases of the nervous system and sense organs,93,6.8,Conditions associated with dizziness or vertigo
+Diseases of the nervous system and sense organs,94,6.8,Other ear and sense organ disorders
+Diseases of the nervous system and sense organs,95,6.9,Other nervous system disorders
+Diseases of the circulatory system,96,7.2,Heart valve disorders
+Diseases of the circulatory system,97,7.2,Peri-; endo-; and myocarditis; cardiomyopathy (except that caused by tuberculosis or sexually transmitted disease)
+Diseases of the circulatory system,98,7.1,Essential hypertension
+Diseases of the circulatory system,99,7.1,Hypertension with complications and secondary hypertension
+Diseases of the circulatory system,100,7.2,Acute myocardial infarction
+Diseases of the circulatory system,101,7.2,Coronary atherosclerosis and other heart disease
+Diseases of the circulatory system,102,7.2,Nonspecific chest pain
+Diseases of the circulatory system,103,7.2,Pulmonary heart disease
+Diseases of the circulatory system,104,7.2,Other and ill-defined heart disease
+Diseases of the circulatory system,105,7.2,Conduction disorders
+Diseases of the circulatory system,106,7.2,Cardiac dysrhythmias
+Diseases of the circulatory system,107,7.2,Cardiac arrest and ventricular fibrillation
+Diseases of the circulatory system,108,7.2,Congestive heart failure; nonhypertensive
+Diseases of the circulatory system,109,7.3,Acute cerebrovascular disease
+Diseases of the circulatory system,110,7.3,Occlusion or stenosis of precerebral arteries
+Diseases of the circulatory system,111,7.3,Other and ill-defined cerebrovascular disease
+Diseases of the circulatory system,112,7.3,Transient cerebral ischemia
+Diseases of the circulatory system,113,7.3,Late effects of cerebrovascular disease
+Diseases of the circulatory system,114,7.4,Peripheral and visceral atherosclerosis
+Diseases of the circulatory system,115,7.4,Aortic; peripheral; and visceral artery aneurysms
+Diseases of the circulatory system,116,7.4,Aortic and peripheral arterial embolism or thrombosis
+Diseases of the circulatory system,117,7.4,Other circulatory disease
+Diseases of the circulatory system,118,7.5,Phlebitis; thrombophlebitis and thromboembolism
+Diseases of the circulatory system,119,7.5,Varicose veins of lower extremity
+Diseases of the circulatory system,120,7.5,Hemorrhoids
+Diseases of the circulatory system,121,7.5,Other diseases of veins and lymphatics
+Diseases of the respiratory system,122,8.1,Pneumonia (except that caused by tuberculosis or sexually transmitted disease)
+Diseases of the respiratory system,123,8.1,Influenza
+Diseases of the respiratory system,124,8.1,Acute and chronic tonsillitis
+Diseases of the respiratory system,125,8.1,Acute bronchitis
+Diseases of the respiratory system,126,8.1,Other upper respiratory infections
+Diseases of the respiratory system,127,8.2,Chronic obstructive pulmonary disease and bronchiectasis
+Diseases of the respiratory system,128,8.3,Asthma
+Diseases of the respiratory system,129,8.4,Aspiration pneumonitis; food/vomitus
+Diseases of the respiratory system,130,8.5,Pleurisy; pneumothorax; pulmonary collapse
+Diseases of the respiratory system,131,8.6,Respiratory failure; insufficiency; arrest (adult)
+Diseases of the respiratory system,132,8.7,Lung disease due to external agents
+Diseases of the respiratory system,133,8.8,Other lower respiratory disease
+Diseases of the respiratory system,134,8.9,Other upper respiratory disease
+Diseases of the digestive system,135,9.1,Intestinal infection
+Diseases of the digestive system,136,9.2,Disorders of teeth and jaw
+Diseases of the digestive system,137,9.3,Diseases of mouth; excluding dental
+Diseases of the digestive system,138,9.4,Esophageal disorders
+Diseases of the digestive system,139,9.4,Gastroduodenal ulcer (except hemorrhage)
+Diseases of the digestive system,140,9.4,Gastritis and duodenitis
+Diseases of the digestive system,141,9.4,Other disorders of stomach and duodenum
+Diseases of the digestive system,142,9.6,Appendicitis and other appendiceal conditions
+Diseases of the digestive system,143,9.5,Abdominal hernia
+Diseases of the digestive system,144,9.6,Regional enteritis and ulcerative colitis
+Diseases of the digestive system,145,9.6,Intestinal obstruction without hernia
+Diseases of the digestive system,146,9.6,Diverticulosis and diverticulitis
+Diseases of the digestive system,147,9.6,Anal and rectal conditions
+Diseases of the digestive system,148,9.6,Peritonitis and intestinal abscess
+Diseases of the digestive system,149,9.7,Biliary tract disease
+Diseases of the digestive system,151,9.8,Other liver diseases
+Diseases of the digestive system,152,9.9,Pancreatic disorders (not diabetes)
+Diseases of the digestive system,153,9.10,Gastrointestinal hemorrhage
+Diseases of the digestive system,154,9.11,Noninfectious gastroenteritis
+Diseases of the digestive system,155,9.12,Other gastrointestinal disorders
+Diseases of the genitourinary system,156,10.1,Nephritis; nephrosis; renal sclerosis
+Diseases of the genitourinary system,157,10.1,Acute and unspecified renal failure
+Diseases of the genitourinary system,158,10.1,Chronic kidney disease
+Diseases of the genitourinary system,159,10.1,Urinary tract infections
+Diseases of the genitourinary system,160,10.1,Calculus of urinary tract
+Diseases of the genitourinary system,161,10.1,Other diseases of kidney and ureters
+Diseases of the genitourinary system,162,10.1,Other diseases of bladder and urethra
+Diseases of the genitourinary system,163,10.1,Genitourinary symptoms and ill-defined conditions
+Diseases of the genitourinary system,164,10.2,Hyperplasia of prostate
+Diseases of the genitourinary system,165,10.2,Inflammatory conditions of male genital organs
+Diseases of the genitourinary system,166,10.2,Other male genital disorders
+Diseases of the genitourinary system,167,10.3,Nonmalignant breast conditions
+Diseases of the genitourinary system,168,10.3,Inflammatory diseases of female pelvic organs
+Diseases of the genitourinary system,169,10.3,Endometriosis
+Diseases of the genitourinary system,170,10.3,Prolapse of female genital organs
+Diseases of the genitourinary system,171,10.3,Menstrual disorders
+Diseases of the genitourinary system,172,10.3,Ovarian cyst
+Diseases of the genitourinary system,173,10.3,Menopausal disorders
+Diseases of the genitourinary system,174,10.3,Female infertility
+Diseases of the genitourinary system,175,10.3,Other female genital disorders
+Complications of pregnancy; childbirth; and the puerperium,176,11.1,Contraceptive and procreative management
+Complications of pregnancy; childbirth; and the puerperium,177,11.2,Spontaneous abortion
+Complications of pregnancy; childbirth; and the puerperium,178,11.2,Induced abortion
+Complications of pregnancy; childbirth; and the puerperium,179,11.2,Postabortion complications
+Complications of pregnancy; childbirth; and the puerperium,180,11.3,Ectopic pregnancy
+Complications of pregnancy; childbirth; and the puerperium,181,11.3,Other complications of pregnancy
+Complications of pregnancy; childbirth; and the puerperium,182,11.3,Hemorrhage during pregnancy; abruptio placenta; placenta previa
+Complications of pregnancy; childbirth; and the puerperium,183,11.3,Hypertension complicating pregnancy; childbirth and the puerperium
+Complications of pregnancy; childbirth; and the puerperium,184,11.3,Early or threatened labor
+Complications of pregnancy; childbirth; and the puerperium,185,11.3,Prolonged pregnancy
+Complications of pregnancy; childbirth; and the puerperium,186,11.3,Diabetes or abnormal glucose tolerance complicating pregnancy; childbirth; or the puerperium
+Complications of pregnancy; childbirth; and the puerperium,187,11.4,Malposition; malpresentation
+Complications of pregnancy; childbirth; and the puerperium,188,11.4,Fetopelvic disproportion; obstruction
+Complications of pregnancy; childbirth; and the puerperium,189,11.4,Previous C-section
+Complications of pregnancy; childbirth; and the puerperium,190,11.4,Fetal distress and abnormal forces of labor
+Complications of pregnancy; childbirth; and the puerperium,191,11.4,Polyhydramnios and other problems of amniotic cavity
+Complications of pregnancy; childbirth; and the puerperium,192,11.5,Umbilical cord complication
+Complications of pregnancy; childbirth; and the puerperium,193,11.5,OB-related trauma to perineum and vulva
+Complications of pregnancy; childbirth; and the puerperium,194,11.5,Forceps delivery
+Complications of pregnancy; childbirth; and the puerperium,195,11.6,Other complications of birth; puerperium affecting management of mother
+Complications of pregnancy; childbirth; and the puerperium,196,11.7,Other pregnancy and delivery including normal
+Diseases of the skin and subcutaneous tissue,197,12.1,Skin and subcutaneous tissue infections
+Diseases of the skin and subcutaneous tissue,198,12.2,Other inflammatory condition of skin
+Diseases of the skin and subcutaneous tissue,199,12.3,Chronic ulcer of skin
+Diseases of the skin and subcutaneous tissue,200,12.4,Other skin disorders
+Diseases of the musculoskeletal system and connective tissue,201,13.1,Infective arthritis and osteomyelitis (except that caused by tuberculosis or sexually transmitted disease)
+Diseases of the musculoskeletal system and connective tissue,202,13.2,Rheumatoid arthritis and related disease
+Diseases of the musculoskeletal system and connective tissue,203,13.2,Osteoarthritis
+Diseases of the musculoskeletal system and connective tissue,204,13.2,Other non-traumatic joint disorders
+Diseases of the musculoskeletal system and connective tissue,205,13.3,Spondylosis; intervertebral disc disorders; other back problems
+Diseases of the musculoskeletal system and connective tissue,206,13.4,Osteoporosis
+Diseases of the musculoskeletal system and connective tissue,207,13.5,Pathological fracture
+Diseases of the musculoskeletal system and connective tissue,208,13.6,Acquired foot deformities
+Diseases of the musculoskeletal system and connective tissue,209,13.6,Other acquired deformities
+Diseases of the musculoskeletal system and connective tissue,210,13.7,Systemic lupus erythematosus and connective tissue disorders
+Diseases of the musculoskeletal system and connective tissue,211,13.8,Other connective tissue disease
+Diseases of the musculoskeletal system and connective tissue,212,13.9,Other bone disease and musculoskeletal deformities
+Congenital anomalies,213,14.1,Cardiac and circulatory congenital anomalies
+Congenital anomalies,214,14.2,Digestive congenital anomalies
+Congenital anomalies,215,14.3,Genitourinary congenital anomalies
+Congenital anomalies,216,14.4,Nervous system congenital anomalies
+Congenital anomalies,217,14.5,Other congenital anomalies
+Certain conditions originating in the perinatal period,218,15.1,Liveborn
+Certain conditions originating in the perinatal period,219,15.2,Short gestation; low birth weight; and fetal growth retardation
+Certain conditions originating in the perinatal period,220,15.3,Intrauterine hypoxia and birth asphyxia
+Certain conditions originating in the perinatal period,221,15.4,Respiratory distress syndrome
+Certain conditions originating in the perinatal period,222,15.5,Hemolytic jaundice and perinatal jaundice
+Certain conditions originating in the perinatal period,223,15.6,Birth trauma
+Certain conditions originating in the perinatal period,224,15.7,Other perinatal conditions
+Injury and poisoning,225,16.1,Joint disorders and dislocations; trauma-related
+Injury and poisoning,226,16.2,Fracture of neck of femur (hip)
+Injury and poisoning,227,16.3,Spinal cord injury
+Injury and poisoning,228,16.2,Skull and face fractures
+Injury and poisoning,229,16.2,Fracture of upper limb
+Injury and poisoning,230,16.2,Fracture of lower limb
+Injury and poisoning,231,16.2,Other fractures
+Injury and poisoning,232,16.7,Sprains and strains
+Injury and poisoning,233,16.4,Intracranial injury
+Injury and poisoning,234,16.5,Crushing injury or internal injury
+Injury and poisoning,235,16.6,Open wounds of head; neck; and trunk
+Injury and poisoning,236,16.6,Open wounds of extremities
+Injury and poisoning,237,16.10,Complication of device; implant or graft
+Injury and poisoning,238,16.10,Complications of surgical procedures or medical care
+Injury and poisoning,239,16.8,Superficial injury; contusion
+Injury and poisoning,240,16.9,Burns
+Injury and poisoning,241,16.11,Poisoning by psychotropic agents
+Injury and poisoning,242,16.11,Poisoning by other medications and drugs
+Injury and poisoning,243,16.11,Poisoning by nonmedicinal substances
+Injury and poisoning,244,16.12,Other injuries and conditions due to external causes
+Symptoms; signs; and ill-defined conditions and factors influencing health status,245,17.1,Syncope
+Symptoms; signs; and ill-defined conditions and factors influencing health status,246,17.1,Fever of unknown origin
+Symptoms; signs; and ill-defined conditions and factors influencing health status,247,17.1,Lymphadenitis
+Symptoms; signs; and ill-defined conditions and factors influencing health status,248,17.1,Gangrene
+Symptoms; signs; and ill-defined conditions and factors influencing health status,249,17.1,Shock
+Symptoms; signs; and ill-defined conditions and factors influencing health status,250,17.1,Nausea and vomiting
+Symptoms; signs; and ill-defined conditions and factors influencing health status,251,17.1,Abdominal pain
+Symptoms; signs; and ill-defined conditions and factors influencing health status,252,17.1,Malaise and fatigue
+Symptoms; signs; and ill-defined conditions and factors influencing health status,253,17.1,Allergic reactions
+Symptoms; signs; and ill-defined conditions and factors influencing health status,254,17.2,Rehabilitation care; fitting of prostheses; and adjustment of devices
+Symptoms; signs; and ill-defined conditions and factors influencing health status,255,17.2,Administrative/social admission
+Symptoms; signs; and ill-defined conditions and factors influencing health status,256,17.2,Medical examination/evaluation
+Symptoms; signs; and ill-defined conditions and factors influencing health status,257,17.2,Other aftercare
+Symptoms; signs; and ill-defined conditions and factors influencing health status,258,17.2,Other screening for suspected conditions (not mental disorders or infectious disease)
+Residual codes; unclassified; all E codes [259. and 260.],259,NA,Residual codes; unclassified
+Mental Illness,650,5.1,Adjustment disorders
+Mental Illness,651,5.2,Anxiety disorders
+Mental Illness,652,5.3,Attention-deficit conduct and disruptive behavior disorders
+Mental Illness,653,5.4,Delirium dementia and amnestic and other cognitive disorders
+Mental Illness,654,5.5,Developmental disorders
+Mental Illness,655,5.6,Disorders usually diagnosed in infancy childhood or adolescence
+Mental Illness,656,5.7,Impulse control disorders NEC
+Mental Illness,657,5.8,Mood disorders
+Mental Illness,658,5.9,Personality disorders
+Mental Illness,659,5.10,Schizophrenia and other psychotic disorders
+Mental Illness,660,5.11,Alcohol-related disorders
+Mental Illness,661,5.12,Substance-related disorders
+Mental Illness,662,5.13,Suicide and intentional self-inflicted injury
+Mental Illness,663,5.14,Screening and history of mental health and substance abuse codes
+Mental Illness,670,5.15,Miscellaneous mental health disorders
+Residual codes; unclassified; all E codes [259. and 260.],2601,NA,External cause codes:  Cut/pierce
+Residual codes; unclassified; all E codes [259. and 260.],2602,NA,External cause codes:  Drowning/submersion
+Residual codes; unclassified; all E codes [259. and 260.],2603,NA,External cause codes:  Fall
+Residual codes; unclassified; all E codes [259. and 260.],2604,NA,External cause codes:  Fire/burn
+Residual codes; unclassified; all E codes [259. and 260.],2605,NA,External cause codes:  Firearm
+Residual codes; unclassified; all E codes [259. and 260.],2606,NA,External cause codes:  Machinery
+Residual codes; unclassified; all E codes [259. and 260.],2607,NA,External cause codes:  Motor vehicle traffic (MVT)
+Residual codes; unclassified; all E codes [259. and 260.],2608,NA,External cause codes:  Pedal cyclist; not MVT
+Residual codes; unclassified; all E codes [259. and 260.],2609,NA,External cause codes:  Pedestrian; not MVT
+Residual codes; unclassified; all E codes [259. and 260.],2610,NA,External cause codes:  Transport; not MVT
+Residual codes; unclassified; all E codes [259. and 260.],2611,NA,External cause codes:  Natural/environment
+Residual codes; unclassified; all E codes [259. and 260.],2612,NA,External cause codes:  Overexertion
+Residual codes; unclassified; all E codes [259. and 260.],2613,NA,External cause codes:  Poisoning
+Residual codes; unclassified; all E codes [259. and 260.],2614,NA,External cause codes:  Struck by; against
+Residual codes; unclassified; all E codes [259. and 260.],2615,NA,External cause codes:  Suffocation
+Residual codes; unclassified; all E codes [259. and 260.],2616,NA,Adverse effects of medical care
+Residual codes; unclassified; all E codes [259. and 260.],2617,NA,Adverse effects of medical drugs
+Residual codes; unclassified; all E codes [259. and 260.],2618,NA,External cause codes:  Other specified and classifiable
+Residual codes; unclassified; all E codes [259. and 260.],2619,NA,External cause codes:  Other specified; NEC
+Residual codes; unclassified; all E codes [259. and 260.],2620,NA,External cause codes:  Unspecified
+Residual codes; unclassified; all E codes [259. and 260.],2621,NA,External cause codes:  Place of occurrence
+Mental Illness,6521,5.3,Conduct disorder
+Mental Illness,6522,5.3,Oppositional defiant disorder
+Mental Illness,6523,5.3,Attention deficit disorder and Attention deficit hyperactivity disorder
+Mental Illness,6541,5.5,Communication disorders
+Mental Illness,6542,5.5,Developmental disabilities
+Mental Illness,6543,5.5,Intellectual disabilities
+Mental Illness,6544,5.5,Learning disorders
+Mental Illness,6545,5.5,Motor skill disorders
+Mental Illness,6551,5.6,Elimination disorders
+Mental Illness,6552,5.6,Other disorders of infancy  childhood  or adolescence
+Mental Illness,6553,5.6,Pervasive developmental disorders
+Mental Illness,6554,5.6,Tic disorders
+Mental Illness,6571,5.8,Bipolar disorders
+Mental Illness,6572,5.8,Depressive disorders
+Mental Illness,6631,5.14,Codes related to mental health disorders
+Mental Illness,6632,5.14,Codes related to substance-related disorders
+Mental Illness,6701,5.15,Dissociative disorders
+Mental Illness,6702,5.15,Eating disorders
+Mental Illness,6703,5.15,Factitious disorders
+Mental Illness,6704,5.15,Psychogenic disorders
+Mental Illness,6705,5.15,Sexual and gender identity disorders
+Mental Illness,6706,5.15,Sleep disorders
+Mental Illness,6707,5.15,Somatoform disorders
+Mental Illness,6708,5.15,Mental disorders due to general medical conditions not elsewhere classified
+Mental Illness,6709,5.15,Other miscellaneous mental conditions

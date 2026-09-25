@@ -1,0 +1,25 @@
+method,m,test_auc,status,source,n_train,best_k,model,seed
+Chance,4,0.5,reference,constant score,,,,
+Key-count baseline,4,0.5,derived_and_data_verified,Every sequence has the identical m-dimensional all-ones key-count vector.,,,,
+Known-lag pair LR,4,,not_applicable,KIP has no fixed generating lag.,,,,
+Oracle AUC,4,1.0,recomputed_and_matches_retained,repro/src/analysis/mechanism_id/results/kip_oracle_reveal.csv,,,,
+Full-count XGBoost,4,0.5030430754116745,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,200000.0,,,
+All-lag pair XGBoost (stacked),4,0.5902868488143368,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,100000.0,,,
+All-lag pair LR (L2; supplemental),4,0.5001959829504057,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,100000.0,,,
+Pair XGBoost (max over lags; supplemental),4,1.0,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,200000.0,,,
+Pair XGBoost (sum over lags; supplemental),4,0.9999999951999275,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,200000.0,,,
+Best contiguous k-gram,4,0.5041101578759607,retained_previous_turn_audit,results/kip_ngram_audit_20260918/metrics.csv,400000.0,1.0,,
+Best neural model,4,1.0,retained_observed_maximum,results/kip_llama1b_full_20260916_seed9950/runs/full/llama1b/kip_m4/ordered/seed9950/metrics.json,400000.0,,meta-llama/Llama-3.2-1B,9950.0
+All-lag pair LR (L1),4,0.49955743093738836,new_fit,kip_m4_l1_fit.npz,100000.0,,,20260421.0
+Chance,6,0.5,reference,constant score,,,,
+Key-count baseline,6,0.5,derived_and_data_verified,Every sequence has the identical m-dimensional all-ones key-count vector.,,,,
+Known-lag pair LR,6,,not_applicable,KIP has no fixed generating lag.,,,,
+Oracle AUC,6,1.0,recomputed_and_matches_retained,repro/src/analysis/mechanism_id/results/kip_oracle_reveal.csv,,,,
+Full-count XGBoost,6,0.500339335499447,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,200000.0,,,
+All-lag pair XGBoost (stacked),6,0.5011812854273647,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,100000.0,,,
+All-lag pair LR (L2; supplemental),6,0.5021545405807115,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,100000.0,,,
+Pair XGBoost (max over lags; supplemental),6,0.5015495266204663,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,200000.0,,,
+Pair XGBoost (sum over lags; supplemental),6,0.5026902575164344,retained,repro/src/analysis/mechanism_id/results/kip_audit.csv,200000.0,,,
+Best contiguous k-gram,6,0.50436685494861,retained_previous_turn_audit,results/kip_ngram_audit_20260918/metrics.csv,400000.0,5.0,,
+Best neural model,6,0.5049,retained_observed_maximum,logs/kip/Transformer_kip_m6_ordered_9551.log,400000.0,,Transformer,9551.0
+All-lag pair LR (L1),6,0.5016203388498979,new_fit,kip_m6_l1_fit.npz,100000.0,,,20260421.0

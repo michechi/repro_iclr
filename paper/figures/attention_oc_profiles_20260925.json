@@ -1,0 +1,35 @@
+{
+  "aggregation": "equal-head mean of saved per-example mass/uniform-baseline ratios",
+  "condition": "all",
+  "generator_sha256": "5b70f250354ffa979139bfd63dd21e5adfa1bf3975f3e43a32b1d5f2db9fa3dc",
+  "layer_numbering": "source zero-based physical indices plus one",
+  "samples": 1000,
+  "scope": "replot completed audits; no new inference, training or patient-level export",
+  "sources": [
+    {
+      "condition": "OC-Deterministic, 200K",
+      "directory": "results/encoder_oc_ckd_attention_20260923/attention/bert_oc_ordered",
+      "model": "BERT-base"
+    },
+    {
+      "condition": "OC-Deterministic, 200K",
+      "directory": "results/encoder_oc_ckd_attention_20260923/attention/roberta_oc_ordered",
+      "model": "RoBERTa-base"
+    },
+    {
+      "condition": "OC-Deterministic, 200K",
+      "directory": "results/llama8_oc_ckd_attention_20260924/attention/llama8_oc_ordered",
+      "model": "Llama-3.1-8B"
+    },
+    {
+      "condition": "OC-Deterministic, 400K",
+      "directory": "results/qwen_oc_clinical_attention_20260922_seed9950/attention/ocdet",
+      "model": "Qwen3.8-27B"
+    },
+    {
+      "condition": "OC-Noisy, 400K",
+      "directory": "results/qwen38_27b_oc_noisy_attention_20260924_seed9950/attention/ocnoise",
+      "model": "Qwen3.8-27B"
+    }
+  ]
+}

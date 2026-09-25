@@ -1,0 +1,57 @@
+{
+  "best_epoch": 4,
+  "best_model": "results/kip_encoders_20260916_seed9950/runs/full/roberta/kip_m4/shuffled_train/seed9950/best_model",
+  "early_stopped": true,
+  "epochs_completed": 7,
+  "is_smoke": false,
+  "manifest": "results/kip_encoders_20260916_seed9950/runs/full/roberta/kip_m4/shuffled_train/seed9950/manifest.json",
+  "mode": "shuffled_train",
+  "model_name": "FacebookAI/roberta-base",
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "tag": "kip_m4",
+  "test": {
+    "accuracy": 0.49806,
+    "auc": 0.49988536227419783,
+    "f1": 0.664939989052508,
+    "loss": 0.6914436720657349,
+    "precision": 0.49806,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 0.50194,
+    "auc": 0.49988536227419783,
+    "f1": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "threshold": 0.5
+  },
+  "threshold_selected_on": "validation",
+  "training_seconds": 330.0054467689997,
+  "tuning": "full",
+  "validation": {
+    "accuracy": 0.4982,
+    "auc": 0.5007502657234437,
+    "f1": 0.6650647443598986,
+    "loss": 0.691446796798706,
+    "precision": 0.4982,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.5018,
+    "auc": 0.5007502657234437,
+    "f1": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "threshold": 0.5
+  },
+  "wall_seconds_this_process": 354.2743778840004
+}

@@ -1,0 +1,13 @@
+{
+  "dataset": "OC-Det.",
+  "family": "stacked_all_lag",
+  "feature_dimensions": 12844,
+  "fit_seconds": 72.05094715900123,
+  "model": "xgboost",
+  "n_test": 50000,
+  "n_train": 100000,
+  "seed": 20260421,
+  "tag": "6",
+  "task": "oc_det_xgb",
+  "test_auc": 0.9983061624861302
+}

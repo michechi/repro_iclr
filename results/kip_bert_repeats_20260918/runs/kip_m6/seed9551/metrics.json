@@ -1,0 +1,13 @@
+{
+  "best_epoch": 1,
+  "best_validation_loss": 0.6931669680786133,
+  "epochs_completed": 4,
+  "n_test": 50000,
+  "n_train": 400000,
+  "n_val": 50000,
+  "seed": 9551,
+  "smoke": false,
+  "tag": "kip_m6",
+  "test_auc": 0.49494994923783553,
+  "threshold": 0.1
+}

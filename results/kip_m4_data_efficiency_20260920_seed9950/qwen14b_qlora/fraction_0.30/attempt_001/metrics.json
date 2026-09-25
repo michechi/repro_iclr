@@ -1,0 +1,62 @@
+{
+  "arm": "qwen14b_qlora",
+  "best_epoch": 4,
+  "checkpoint_policy": "selected trainable adapter/head saved; full weights CPU RAM only; unfinished fit restarts",
+  "early_stopped": true,
+  "epochs_completed": 7,
+  "fraction": 0.3,
+  "is_smoke": false,
+  "mode": "ordered",
+  "rows": {
+    "test": 50000,
+    "train": 120000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "selected_weights_saved": true,
+  "status": "completed",
+  "stop_reason": "validation_patience",
+  "stopping_rule": "validation_gated_test_auc_1",
+  "tag": "kip_m4",
+  "test": {
+    "accuracy": 0.49806,
+    "auc": 0.5048728549579077,
+    "f1": 0.664939989052508,
+    "loss": 0.6941510688400269,
+    "precision": 0.49806,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 0.50402,
+    "auc": 0.5048728549579077,
+    "f1": 0.47571932940106976,
+    "precision": 0.5023216358603447,
+    "recall": 0.4517929566718869,
+    "threshold": 0.5
+  },
+  "test_check_trigger": "new_minimum_validation_loss_with_validation_auc_1",
+  "test_informed_stopping": true,
+  "threshold_selected_on": "validation",
+  "training_seconds": 5605.088610178005,
+  "validation": {
+    "accuracy": 0.4982,
+    "auc": 0.5017098029590463,
+    "f1": 0.6650647443598986,
+    "loss": 0.6944117593574524,
+    "precision": 0.4982,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.5016,
+    "auc": 0.5017098029590463,
+    "f1": 0.4778527427398064,
+    "precision": 0.4997808555399719,
+    "recall": 0.45776796467282216,
+    "threshold": 0.5
+  },
+  "wall_seconds": 5795.806642802003
+}

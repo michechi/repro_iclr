@@ -1,0 +1,8 @@
+# Optional dependencies of legacy modules kept for review only. None of the
+# entry points documented in README.md or REPRODUCING.md imports these; install
+# them only to run the historical scripts named below.
+-r requirements.txt
+icd-mappings   # imported as `icdmappings` by src/analysis/data_exploration_top.py and related scripts
+num2words      # src/data/prompts.py
+seaborn        # src/analysis/complexity_graph.py
+wandb          # src/models/training_time.py

@@ -1,0 +1,35 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Core full-data test AUC. Parentheses give standard deviations
+over three runs; (---) denotes a single-run result. A standalone dash
+denotes an unreported condition. Reference baselines are shown without
+standard deviations. The contiguous reference uses $k=2$ for OC and KIP,
+and $k=1$ for GPC. Pretrained rows use the historical adaptation recipes.
+KIP LSTM and Transformer use early-stopping patience 3; their means and
+sample standard deviations are computed from the three logged test AUCs.
+Parameter ranges include the recorded KIP architecture variants;
+RNNTransformer is a BiLSTM--Transformer.}
+\label{tab:results_full}\label{tab:models}
+\begin{tabular}{@{}lrccccc@{}}
+\toprule
+Model & Total parameters & OC-Det. & OC-Noisy & GPC & KIP-4 & KIP-6\\
+\midrule
+Oracle & --- & 1.000 & .670 & 1.000 & 1.000 & 1.000\\
+Contiguous baseline & --- & .821 & .585 & .505 & .501 & .499\\
+XGBoost (basic) & --- & .625 (.012) & .463 (.010) & .495 (.004) & .507 (.004) & .504 (.000)\\
+XGBoost (LLM) & --- & .494 (.010) & .418 (.011) & .501 (.003) & .505 (.002) & .501 (.004)\\
+BERT & 110M & .999 (.001) & .669 (.006) & .503 (.002) & .500 (---) & .502 (---)\\
+RoBERTa & 355M & .999 (.001) & .652 (.008) & .501 (.003) & --- & ---\\
+Llama-3.2-1B & 1B & .846 (.015) & .587 (.008) & .497 (.005) & .505 (---) & ---\\
+Llama-3.1-8B & 8B & .995 (.003) & .575 (.008) & .500 (.003) & --- & ---\\
+Llama-1M (cold) & 1M & .832 (.012) & --- & .503 (.003) & --- & ---\\
+Qwen3-4B-Think & 4B & .850 (.014) & .597 (.007) & .500 (.002) & --- & ---\\
+Qwen2.5-14B & 14B & --- & .670 (---) & --- & --- & ---\\
+Qwen3.8-27B (xthink) & 27B & --- & --- & --- & --- & ---\\
+Llama-3.1-70B & 70B & --- & --- & .502 (---) & --- & ---\\
+LSTM & 198K--340K & .999 (.001) & .665 (.003) & .502 (.003) & .833 (.290) & .500 (.002)\\
+Transformer & 103K--169K & .999 (.001) & .671 (.001) & .501 (.003) & .500 (.003) & .502 (.003)\\
+RNNTransformer & 319K--455K & .997 (.002) & .671 (.005) & .501 (.002) & --- & ---\\
+\bottomrule
+\end{tabular}
+\end{table}

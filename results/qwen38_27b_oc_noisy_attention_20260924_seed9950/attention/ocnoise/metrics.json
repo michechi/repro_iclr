@@ -1,0 +1,58 @@
+{
+  "counterfactuals": {
+    "count_matched_label_flip": {
+      "clean_accuracy_at_0_5": 0.9739583333333334,
+      "mean_absolute_probability_change": 0.40144262136891484,
+      "prediction_flip_rate": 0.9739583333333334,
+      "samples": 192
+    },
+    "distractor_swap": {
+      "clean_accuracy_at_0_5": 1.0,
+      "mean_absolute_probability_change": 0.0053521814942359925,
+      "prediction_flip_rate": 0.0,
+      "samples": 200
+    },
+    "random_shuffle": {
+      "clean_accuracy_at_0_5": 0.995,
+      "mean_absolute_probability_change": 0.14734339639544486,
+      "prediction_flip_rate": 0.325,
+      "samples": 200
+    }
+  },
+  "full_test_reference": {
+    "accuracy": 0.41536,
+    "auc": 0.6653328762089209,
+    "f1": 0.586908597591996,
+    "loss": 0.6150301460456848,
+    "precision": 0.4153366134645386,
+    "recall": 1.0,
+    "threshold": 0.23999999999999994
+  },
+  "max_reference_probability_error": 2.9492187469948306e-08,
+  "mean_reference_probability_error": 6.1692852777461834e-09,
+  "physical_layer_ids": [
+    3,
+    7,
+    11,
+    15,
+    19,
+    23,
+    27,
+    31,
+    35,
+    39,
+    43,
+    47,
+    51,
+    55,
+    59,
+    63
+  ],
+  "sample_clean_auc": 0.9998839099140933,
+  "sample_observed_ap": 0.5893033473436824,
+  "sample_observed_auc": 0.6433683831236897,
+  "samples": 1000,
+  "status": "completed",
+  "tag": "ocnoise",
+  "wall_seconds": 469.5606409459724
+}

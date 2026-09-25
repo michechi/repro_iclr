@@ -1,0 +1,4 @@
+task,dataset,tag,family,model,test_auc,n_train,n_test,seed,feature_dimensions,fit_seconds
+gpc_l1,GPC,test_just_pair,stacked_all_lag,logreg_L1,0.4979696665673967,100000,50000,20260421,12844,6.870752577999156
+gpc_xgb,GPC,test_just_pair,stacked_all_lag,xgboost,0.49722273564036223,100000,50000,20260421,12844,73.12650314300117
+oc_det_xgb,OC-Det.,6,stacked_all_lag,xgboost,0.9983061624861302,100000,50000,20260421,12844,72.05094715900123

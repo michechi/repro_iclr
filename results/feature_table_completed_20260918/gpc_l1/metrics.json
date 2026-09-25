@@ -1,0 +1,13 @@
+{
+  "dataset": "GPC",
+  "family": "stacked_all_lag",
+  "feature_dimensions": 12844,
+  "fit_seconds": 6.870752577999156,
+  "model": "logreg_L1",
+  "n_test": 50000,
+  "n_train": 100000,
+  "seed": 20260421,
+  "tag": "test_just_pair",
+  "task": "gpc_l1",
+  "test_auc": 0.4979696665673967
+}

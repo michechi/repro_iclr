@@ -1,0 +1,70 @@
+{
+  "best_epoch": 20,
+  "condition": "ordered",
+  "epochs_completed": 20,
+  "is_smoke": false,
+  "model": "bert",
+  "selected_by": "validation_loss",
+  "selected_checkpoint_sha256": "95f41816ae48c753f1229d5a566f3e6bfaf72e71b6626729b5a13f34e9504b4e",
+  "status": "completed",
+  "stop_reason": "max_epochs",
+  "task": "oc",
+  "test": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "auroc": 1.0,
+    "average_precision": 1.0,
+    "f1": 1.0,
+    "loss": 1.75656795501709e-06,
+    "positive_rows": 14585,
+    "precision": 1.0,
+    "recall": 1.0,
+    "rows": 50000,
+    "threshold": 0.1
+  },
+  "test_informed_stopping": false,
+  "threshold_selected_on": "validation",
+  "tokenization": {
+    "test": {
+      "context_policy": "no truncation",
+      "max_full_tokens": 25,
+      "max_input_tokens": 25,
+      "min_full_tokens": 25,
+      "rows": 50000,
+      "truncated_fraction": 0.0,
+      "truncated_rows": 0
+    },
+    "train": {
+      "context_policy": "no truncation",
+      "max_full_tokens": 25,
+      "max_input_tokens": 25,
+      "min_full_tokens": 25,
+      "rows": 200000,
+      "truncated_fraction": 0.0,
+      "truncated_rows": 0
+    },
+    "val": {
+      "context_policy": "no truncation",
+      "max_full_tokens": 25,
+      "max_input_tokens": 25,
+      "min_full_tokens": 25,
+      "rows": 50000,
+      "truncated_fraction": 0.0,
+      "truncated_rows": 0
+    }
+  },
+  "validation": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "auroc": 1.0,
+    "average_precision": 1.0000000000000002,
+    "f1": 1.0,
+    "loss": 1.7725944519770564e-06,
+    "positive_rows": 14586,
+    "precision": 1.0,
+    "recall": 1.0,
+    "rows": 50000,
+    "threshold": 0.1
+  },
+  "wall_seconds": 881.6290891810204
+}

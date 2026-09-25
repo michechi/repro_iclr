@@ -1,0 +1,75 @@
+{
+  "best_epoch": 3,
+  "best_model": "results/kip_llama1b_full_20260916_seed9950/runs/full/llama1b/kip_m6/ordered/seed9950/best_model",
+  "checkpoint_policy": "selected_model_only; interrupted unfinished run must restart",
+  "early_stopped": true,
+  "epochs_completed": 6,
+  "is_smoke": false,
+  "manifest": "results/kip_llama1b_full_20260916_seed9950/runs/full/llama1b/kip_m6/ordered/seed9950/manifest.json",
+  "mode": "ordered",
+  "model_name": "meta-llama/Llama-3.2-1B",
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "shuffled_test": {
+    "accuracy": 0.5009,
+    "auc": 0.5010024888480639,
+    "f1": 0.667466186954494,
+    "loss": 0.6934188607597351,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "shuffled_test_at_0_5": {
+    "accuracy": 0.49892,
+    "auc": 0.5010024888480639,
+    "f1": 0.09165397723152781,
+    "precision": 0.49822625147812377,
+    "recall": 0.05046915552006388,
+    "threshold": 0.5
+  },
+  "tag": "kip_m6",
+  "test": {
+    "accuracy": 0.5009,
+    "auc": 0.5002150382967241,
+    "f1": 0.667466186954494,
+    "loss": 0.6934654119873047,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 0.49678,
+    "auc": 0.5002150382967241,
+    "f1": 0.08754306436990027,
+    "precision": 0.47707509881422927,
+    "recall": 0.048193252146136956,
+    "threshold": 0.5
+  },
+  "threshold_selected_on": "validation",
+  "training_seconds": 1466.5314277489997,
+  "tuning": "full",
+  "validation": {
+    "accuracy": 0.49982,
+    "auc": 0.498371566188955,
+    "f1": 0.6665066474643624,
+    "loss": 0.6934393454933167,
+    "precision": 0.49982,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.49952,
+    "auc": 0.498371566188955,
+    "f1": 0.09049938213273243,
+    "precision": 0.4934601664684899,
+    "recall": 0.049817934456404304,
+    "threshold": 0.5
+  },
+  "wall_seconds_this_process": 1527.4737698869976
+}

@@ -1,0 +1,13 @@
+split,feature,smd_before,smd_after,maximum_absolute_smd,passes_threshold
+test,count,-0.2592197580435874,0.0,0.1,True
+test,baseline_creatinine_mg_dl,-0.36500782668073495,0.07909545253768038,0.1,True
+test,peak_value,-0.827236466413277,-0.054075052533849165,0.1,True
+test,duration_hours,0.009452500761285072,0.03531499507058424,0.15,True
+train,count,-0.26038698303691604,0.0,0.1,True
+train,baseline_creatinine_mg_dl,-0.35413345303596827,0.05505336797409588,0.1,True
+train,peak_value,-0.7857498402564811,-0.06318043108324453,0.1,True
+train,duration_hours,-0.01598022402766466,-0.061810630235364185,0.15,True
+validation,count,-0.26089261947597736,0.0,0.1,True
+validation,baseline_creatinine_mg_dl,-0.329505985008191,0.06946099531922797,0.1,True
+validation,peak_value,-0.7997183553538199,-0.08792923302982117,0.1,True
+validation,duration_hours,-0.03780339392953827,-0.1074843233925159,0.15,True

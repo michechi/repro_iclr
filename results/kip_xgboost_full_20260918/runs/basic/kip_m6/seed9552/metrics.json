@@ -1,0 +1,17 @@
+{
+  "best_iteration": 0,
+  "best_validation_logloss": 0.6931688001477718,
+  "elapsed_seconds": 0.22449236999818822,
+  "encoding": "basic",
+  "fitted_rounds": 11,
+  "model_reload_check": "passed",
+  "n_test": 50000,
+  "n_train": 400000,
+  "n_val": 50000,
+  "seed": 9552,
+  "smoke": false,
+  "tag": "kip_m6",
+  "test_accuracy_at_half": 0.50146,
+  "test_auc": 0.5039146206833711,
+  "test_f1_at_half": 0.5189416600729491
+}

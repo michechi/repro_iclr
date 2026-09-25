@@ -1,0 +1,58 @@
+{
+  "best_epoch": 3,
+  "best_model": "results/kip_llama1b_full_20260916_seed9950/runs/full/llama1b/kip_m4/shuffled_train/seed9950/best_model",
+  "checkpoint_policy": "selected_model_only; interrupted unfinished run must restart",
+  "early_stopped": true,
+  "epochs_completed": 6,
+  "is_smoke": false,
+  "manifest": "results/kip_llama1b_full_20260916_seed9950/runs/full/llama1b/kip_m4/shuffled_train/seed9950/manifest.json",
+  "mode": "shuffled_train",
+  "model_name": "meta-llama/Llama-3.2-1B",
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "tag": "kip_m4",
+  "test": {
+    "accuracy": 0.49816,
+    "auc": 0.498458331191101,
+    "f1": 0.6648948956970004,
+    "loss": 0.6940086880874634,
+    "precision": 0.4981090545272636,
+    "recall": 0.9995984419547845,
+    "threshold": 0.4999999999999998
+  },
+  "test_at_0_5": {
+    "accuracy": 0.49816,
+    "auc": 0.498458331191101,
+    "f1": 0.6648948956970004,
+    "precision": 0.4981090545272636,
+    "recall": 0.9995984419547845,
+    "threshold": 0.5
+  },
+  "threshold_selected_on": "validation",
+  "training_seconds": 1471.2525694340002,
+  "tuning": "full",
+  "validation": {
+    "accuracy": 0.49838,
+    "auc": 0.5042823434991717,
+    "f1": 0.665073112105228,
+    "loss": 0.6939041600036621,
+    "precision": 0.4982891445722861,
+    "recall": 0.9996788438378161,
+    "threshold": 0.4999999999999998
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.49838,
+    "auc": 0.5042823434991717,
+    "f1": 0.665073112105228,
+    "precision": 0.4982891445722861,
+    "recall": 0.9996788438378161,
+    "threshold": 0.5
+  },
+  "wall_seconds_this_process": 1522.1913471939988
+}

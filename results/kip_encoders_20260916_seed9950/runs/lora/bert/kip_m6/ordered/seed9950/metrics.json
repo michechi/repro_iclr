@@ -1,0 +1,74 @@
+{
+  "best_epoch": 2,
+  "best_model": "results/kip_encoders_20260916_seed9950/runs/lora/bert/kip_m6/ordered/seed9950/best_model",
+  "early_stopped": true,
+  "epochs_completed": 5,
+  "is_smoke": false,
+  "manifest": "results/kip_encoders_20260916_seed9950/runs/lora/bert/kip_m6/ordered/seed9950/manifest.json",
+  "mode": "ordered",
+  "model_name": "bert-base-uncased",
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "shuffled_test": {
+    "accuracy": 0.5009,
+    "auc": 0.5017723705424806,
+    "f1": 0.667466186954494,
+    "loss": 0.69302640625,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "shuffled_test_at_0_5": {
+    "accuracy": 0.5,
+    "auc": 0.5017723705424806,
+    "f1": 0.05845134076529075,
+    "precision": 0.5149303251493033,
+    "recall": 0.03098422838889998,
+    "threshold": 0.5
+  },
+  "tag": "kip_m6",
+  "test": {
+    "accuracy": 0.5009,
+    "auc": 0.49828002482728045,
+    "f1": 0.667466186954494,
+    "loss": 0.6930583592224121,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 0.49922,
+    "auc": 0.49828002482728045,
+    "f1": 0.05836561242525667,
+    "precision": 0.5019404915912031,
+    "recall": 0.03098422838889998,
+    "threshold": 0.5
+  },
+  "threshold_selected_on": "validation",
+  "training_seconds": 230.51974796199988,
+  "tuning": "lora",
+  "validation": {
+    "accuracy": 0.49982,
+    "auc": 0.5012300273594116,
+    "f1": 0.6665066474643624,
+    "loss": 0.6930007029342652,
+    "precision": 0.49982,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.50098,
+    "auc": 0.5012300273594116,
+    "f1": 0.058772492361084915,
+    "precision": 0.5131752305665349,
+    "recall": 0.031171221639790324,
+    "threshold": 0.5
+  },
+  "wall_seconds_this_process": 262.6137508259999
+}

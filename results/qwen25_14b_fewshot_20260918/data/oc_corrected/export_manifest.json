@@ -1,0 +1,218 @@
+{
+  "column_mapping": {
+    "Sequences": "splits/{split}.parquet:X; unchanged original U+001F-separated 20-letter string",
+    "ocdet.Outcome": "splits/{split}.parquet:Y_star",
+    "ocnoise.Outcome": "noise/{split}.parquet:Y_pi_0p3, joined one-to-one by sequence_id"
+  },
+  "data_seed": 9550,
+  "index_mapping": "sequence_id_{split}.csv: row_index (zero based), sequence_id",
+  "mechanism": {
+    "alphabet_size": 26,
+    "kappa": {
+      "D": 1,
+      "J": 3,
+      "Q": 2,
+      "U": 5,
+      "W": 0,
+      "X": 4
+    },
+    "key_letters": [
+      "W",
+      "D",
+      "Q",
+      "J",
+      "X",
+      "U"
+    ],
+    "lag": 7,
+    "n_events": 20,
+    "oracle": "rule_greedy_monotone_impl(tolerance=False, min_chain_length=2)",
+    "oracle_source": "src/analysis/mechanism_id/scripts/common.py",
+    "task_family": "ordered_compliance"
+  },
+  "noise_construction": "Y_pi_0p3 = Y_star XOR (noise_uniform < 0.3)",
+  "noise_probability": 0.3,
+  "noise_seed": 9650,
+  "preparation_script": {
+    "bytes": 6786,
+    "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/prepare.py",
+    "sha256": "e1fc98e00746cd8f4e033a14578b9ada67ebc4e0aab4ac088e44013bd98226d2"
+  },
+  "row_order": "Original base parquet row order, shared by ocdet and ocnoise exports.",
+  "schema_version": 1,
+  "source_manifests": {
+    "dataset": {
+      "bytes": 2649,
+      "path": "data/simulation/oc_hole_audit/dataset_manifest.json",
+      "sha256": "5cea3bdf81dfcf782fb7350a45950916918e0f892089283dd55aeace6e7371d1"
+    },
+    "noise": {
+      "bytes": 6238,
+      "path": "data/simulation/oc_hole_audit/noise_manifest.json",
+      "sha256": "822e50b4acd71cccb8be430f7c15fbcdf3afdc5e11b7a40dc3015b7301102d1b"
+    }
+  },
+  "source_root": "data/simulation/oc_hole_audit",
+  "splits": {
+    "test": {
+      "clean_class_counts": {
+        "0": 35415,
+        "1": 14585
+      },
+      "flipped_rows": 15055,
+      "join": "Validated unique IDs, equal ID sets, explicit one-to-one alignment, complete coverage.",
+      "noisy_class_counts": {
+        "0": 29234,
+        "1": 20766
+      },
+      "outputs": {
+        "X_test_ocdet.csv": {
+          "bytes": 2000010,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/X_test_ocdet.csv",
+          "sha256": "5b7c30aa314142f2d19f6131336224ab0c0a0eecd139d5afedd094ccb510c603"
+        },
+        "X_test_ocnoise.csv": {
+          "bytes": 2000010,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/X_test_ocnoise.csv",
+          "sha256": "5b7c30aa314142f2d19f6131336224ab0c0a0eecd139d5afedd094ccb510c603"
+        },
+        "sequence_id_test.csv": {
+          "bytes": 1038912,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/sequence_id_test.csv",
+          "sha256": "24278265fd20d58c7d6aa24e03559bfea515eea5ebf76b43073ea1fb1dcc520e"
+        },
+        "y_test_ocdet.csv": {
+          "bytes": 100008,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/y_test_ocdet.csv",
+          "sha256": "a7a5b6d92cc8ae23ccdea0ec0177f596cae3dbf8284ae18276c0ad193bda8b8a"
+        },
+        "y_test_ocnoise.csv": {
+          "bytes": 100008,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/y_test_ocnoise.csv",
+          "sha256": "8f88287b02207f9af29f56e2c7bb0cf8edcc5caabe689d8955d402b0ac0cf7bf"
+        }
+      },
+      "rows": 50000,
+      "source_files": {
+        "base": {
+          "bytes": 1719298,
+          "path": "data/simulation/oc_hole_audit/splits/test.parquet",
+          "sha256": "b43fad28e4dfaa9a35c6ff61d42ac13ad03a887a0ea94117269f403eb711b7f7"
+        },
+        "noise": {
+          "bytes": 894962,
+          "path": "data/simulation/oc_hole_audit/noise/test.parquet",
+          "sha256": "45f8090885b90327639db688d371461ce48ff9a5bf818a022923a81253c90974"
+        }
+      },
+      "source_ids_already_in_same_order": true
+    },
+    "train": {
+      "clean_class_counts": {
+        "0": 283315,
+        "1": 116685
+      },
+      "flipped_rows": 120062,
+      "join": "Validated unique IDs, equal ID sets, explicit one-to-one alignment, complete coverage.",
+      "noisy_class_counts": {
+        "0": 233411,
+        "1": 166589
+      },
+      "outputs": {
+        "X_train_ocdet.csv": {
+          "bytes": 16000010,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/X_train_ocdet.csv",
+          "sha256": "331c531cd37071539696b8f74b730f2d96a0e78dc1ac15328224ecacf2b72e40"
+        },
+        "X_train_ocnoise.csv": {
+          "bytes": 16000010,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/X_train_ocnoise.csv",
+          "sha256": "331c531cd37071539696b8f74b730f2d96a0e78dc1ac15328224ecacf2b72e40"
+        },
+        "sequence_id_train.csv": {
+          "bytes": 9088912,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/sequence_id_train.csv",
+          "sha256": "714254ebb99b33b4f291fa4d3657eff3309da3cc532b99b5cc6f3c4c3c438ab3"
+        },
+        "y_train_ocdet.csv": {
+          "bytes": 800008,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/y_train_ocdet.csv",
+          "sha256": "acc8b0a7f69f1d28ae572708a7ac67a11811ed27492dc2b4f1cc3cb30b5c2ad8"
+        },
+        "y_train_ocnoise.csv": {
+          "bytes": 800008,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/y_train_ocnoise.csv",
+          "sha256": "d3f93853620bb93f4940fedc2af7722881bbd96a93822b56a9594c81889348f0"
+        }
+      },
+      "rows": 400000,
+      "source_files": {
+        "base": {
+          "bytes": 12702831,
+          "path": "data/simulation/oc_hole_audit/splits/train.parquet",
+          "sha256": "7b4d4a34e572afaba66ff6b16f808eb6edd76b607e72a24e9033f07fe3669815"
+        },
+        "noise": {
+          "bytes": 5905733,
+          "path": "data/simulation/oc_hole_audit/noise/train.parquet",
+          "sha256": "3775088d6994b48ecb322564a54f75ad520a3332c477fdaa20c2cb846c017317"
+        }
+      },
+      "source_ids_already_in_same_order": true
+    },
+    "val": {
+      "clean_class_counts": {
+        "0": 35414,
+        "1": 14586
+      },
+      "flipped_rows": 15101,
+      "join": "Validated unique IDs, equal ID sets, explicit one-to-one alignment, complete coverage.",
+      "noisy_class_counts": {
+        "0": 29131,
+        "1": 20869
+      },
+      "outputs": {
+        "X_val_ocdet.csv": {
+          "bytes": 2000010,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/X_val_ocdet.csv",
+          "sha256": "1b4f19b0c4b4ea372457f01ac3a32e826fc5b2ae4106193ccd423eb24843b89a"
+        },
+        "X_val_ocnoise.csv": {
+          "bytes": 2000010,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/X_val_ocnoise.csv",
+          "sha256": "1b4f19b0c4b4ea372457f01ac3a32e826fc5b2ae4106193ccd423eb24843b89a"
+        },
+        "sequence_id_val.csv": {
+          "bytes": 988912,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/sequence_id_val.csv",
+          "sha256": "69d2ae9aa13240671107063be378eb3e733f101898baa60258394f5fda662813"
+        },
+        "y_val_ocdet.csv": {
+          "bytes": 100008,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/y_val_ocdet.csv",
+          "sha256": "32903e1cd9e31878afcf6e08f689ac266bdd06dc35733989e7bb0fc421d60c86"
+        },
+        "y_val_ocnoise.csv": {
+          "bytes": 100008,
+          "path": "results/qwen25_14b_fewshot_20260918/data/oc_corrected/y_val_ocnoise.csv",
+          "sha256": "886c3618df3818e4f64a33161d9c46a50d45ee9287f5699c99919fe8f29eef31"
+        }
+      },
+      "rows": 50000,
+      "source_files": {
+        "base": {
+          "bytes": 1718386,
+          "path": "data/simulation/oc_hole_audit/splits/val.parquet",
+          "sha256": "02ec09498b5ce217cfaee5e8c3d8f93cc576cb4e48bec5960d7c20249fe4378f"
+        },
+        "noise": {
+          "bytes": 893637,
+          "path": "data/simulation/oc_hole_audit/noise/val.parquet",
+          "sha256": "88297684c4b8537da0f8aa08ec8620bef27fa9b4b56b6f3489af4ab726621fd0"
+        }
+      },
+      "source_ids_already_in_same_order": true
+    }
+  },
+  "task_family": "ordered_compliance_binary_classification"
+}

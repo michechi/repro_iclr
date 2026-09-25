@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Matched-histogram counterfactual. Sequences are grouped by their 6-dimensional key-letter count vector $(|W|,|D|,|Q|,|J|,|X|,|N|)$. \emph{Ambiguous} groups contain both labels, so any within-group discrimination must use sequential order. BoE AUC on the ambiguous subset shows the residual content signal from non-key letters.}
+\label{tab:matched_histogram}
+\begin{tabular}{l c c c}
+\toprule
+ & Tricky Det.\ & Tricky Rnd.\ & Parity \\
+\midrule
+Key-letter groups & 3,196 & 3,189 & 3,995 \\
+Ambiguous groups & 1,592 & 1,807 & 0 \\
+Ambiguous seqs (\%) & 94.2 & 96.3 & 0.0 \\
+$\rho$ (ambig.\ subset) & 0.341 & 0.415 & --- \\
+BoE-key AUC (ambig.) & 0.751 & 0.567 & --- \\
+BoE-full AUC (ambig.) & 0.799 & 0.578 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}

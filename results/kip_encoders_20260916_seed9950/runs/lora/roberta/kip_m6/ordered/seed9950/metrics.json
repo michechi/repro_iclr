@@ -1,0 +1,74 @@
+{
+  "best_epoch": 5,
+  "best_model": "results/kip_encoders_20260916_seed9950/runs/lora/roberta/kip_m6/ordered/seed9950/best_model",
+  "early_stopped": true,
+  "epochs_completed": 8,
+  "is_smoke": false,
+  "manifest": "results/kip_encoders_20260916_seed9950/runs/lora/roberta/kip_m6/ordered/seed9950/manifest.json",
+  "mode": "ordered",
+  "model_name": "FacebookAI/roberta-base",
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "shuffled_test": {
+    "accuracy": 0.5009,
+    "auc": 0.4993982492503276,
+    "f1": 0.667466186954494,
+    "loss": 0.6925499999046326,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "shuffled_test_at_0_5": {
+    "accuracy": 0.5009,
+    "auc": 0.4993982492503276,
+    "f1": 0.667466186954494,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "tag": "kip_m6",
+  "test": {
+    "accuracy": 0.5009,
+    "auc": 0.5007117519060762,
+    "f1": 0.667466186954494,
+    "loss": 0.6925374220085144,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 0.5009,
+    "auc": 0.5007117519060762,
+    "f1": 0.667466186954494,
+    "precision": 0.5009,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "threshold_selected_on": "validation",
+  "training_seconds": 388.6311697919996,
+  "tuning": "lora",
+  "validation": {
+    "accuracy": 0.49982,
+    "auc": 0.49776341331013835,
+    "f1": 0.6665066474643624,
+    "loss": 0.6925584374809265,
+    "precision": 0.49982,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.49982,
+    "auc": 0.49776341331013835,
+    "f1": 0.6665066474643624,
+    "precision": 0.49982,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "wall_seconds_this_process": 417.4463828759999
+}

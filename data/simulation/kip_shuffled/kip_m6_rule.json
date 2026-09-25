@@ -1,0 +1,24 @@
+{
+  "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  "kappa": {
+    "G": 1,
+    "H": 2,
+    "I": 5,
+    "L": 3,
+    "Y": 4,
+    "Z": 6
+  },
+  "key_letters_in_kappa_order": [
+    "G",
+    "H",
+    "L",
+    "Y",
+    "I",
+    "Z"
+  ],
+  "m": 6,
+  "n": 20,
+  "seed": 959699,
+  "tag": "kip_m6",
+  "task": "KIP"
+}

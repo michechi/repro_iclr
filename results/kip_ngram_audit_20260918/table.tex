@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Contiguous $k$-gram audit: test AUC and OC/GPC coverage
+(fraction of distinct test grams seen in training).}
+\label{tab:ngram_appendix}
+\begin{tabular}{lcccccc}
+\toprule
+$k$ & Coverage & OC-Det. & OC-Noisy & GPC & KIP-4 & KIP-6 \\
+\midrule
+1 & 100.0\% & .813 & .585 & .502 & .504 & .501 \\
+2 & 100.0\% & .819 & .586 & .498 & .501 & .499 \\
+3 & 100.0\% & .818 & .576 & .497 & .501 & .501 \\
+4 & 100.0\% & .781 & .534 & .499 & .500 & .503 \\
+5 & 41.7\%  & .617 & .508 & .497 & .501 & .504 \\
+6 & 1.9\%   & .524 & .499 & .501 & .504 & .499 \\
+7 & 0.1\%   & .501 & .501 & .500 & .500 & .500 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{\linewidth}
+\footnotesize
+KIP-4/KIP-6 coverage is 100.0\%/100.0\% for $k=1,\ldots,4$,
+47.2\%/50.1\% for $k=5$, 2.7\%/3.2\% for $k=6$, and
+0.1\%/0.1\% for $k=7$ (rounded).
+Unseen grams receive probability $0.5$.
+\end{minipage}
+\end{table}

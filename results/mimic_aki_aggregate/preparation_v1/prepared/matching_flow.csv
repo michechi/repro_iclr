@@ -1,0 +1,7 @@
+split,label,n_input,n_matched,n_unmatched,retained_fraction
+test,transient,652,277,375,0.42484662576687116
+test,persistent,1716,277,1439,0.16142191142191142
+train,transient,3007,1657,1350,0.5510475557033588
+train,persistent,7983,1657,6326,0.20756607791557058
+validation,transient,641,232,409,0.3619344773790952
+validation,persistent,1705,232,1473,0.13607038123167156

@@ -1,0 +1,235 @@
+# AKI audit protocol template (schema v1).
+#
+# This file is intentionally NOT runnable as checked in. Every `null` marks a
+# scientific choice that the study protocol must make explicitly. The loader
+# fails before reading MIMIC data until all required choices are resolved.
+# Values already filled below are locked by the agreed audit design or name an
+# output column; they are not clinical defaults.
+
+schema_version: 1
+
+cohort:
+  creatinine_itemid: 50912
+  adult:
+    minimum_age_years: null            # REQUIRED: adult threshold
+    minimum_age_inclusive: null        # REQUIRED
+    age_calculation: null              # REQUIRED: anchor_year_delta
+  admission:
+    eligible_types: null               # REQUIRED: "all" or explicit MIMIC types
+    type_matching: null                # REQUIRED: exact | casefold
+    minimum_stay_hours: null           # REQUIRED
+    minimum_stay_inclusive: null       # REQUIRED
+    charttime_boundary: null           # REQUIRED: both | left | right | neither
+    null_hadm_policy: null              # REQUIRED: reject | link_if_unique
+    administrative_end_policy: null    # REQUIRED: discharge_only | earliest_discharge_or_death
+    invalid_death_time_policy: null     # REQUIRED: exclude_admission | ignore
+  minimum_measurements: 3
+  measurement_count_basis: null        # REQUIRED: rows | distinct_timestamps | distinct_specimens
+  missing_specimen_id_policy: null      # REQUIRED: reject_measurement | exclude_from_count | count_as_unique
+
+cleaning:
+  numeric_value_source: null            # REQUIRED: valuenum_only | valuenum_then_value
+  canonical_unit: mg/dL
+  unit_matching: null                   # REQUIRED: exact | strip | casefold_strip
+  missing_unit_policy: null             # REQUIRED: reject | assume_canonical
+  unit_conversions: null                # REQUIRED: [{aliases: [...], multiplier: ..., offset: ...}]
+  valid_range_mg_dl:
+    minimum: null                       # REQUIRED
+    maximum: null                       # REQUIRED
+    boundary: null                      # REQUIRED: both | left | right | neither
+  deduplication:
+    ordering: null                      # REQUIRED: labevent_id | storetime
+    exact:
+      key: null                         # REQUIRED: explicit column list
+      policy: null                      # REQUIRED: keep_first | keep_last | reject_all | error
+    simultaneous:
+      enabled: null                     # REQUIRED
+      key: null                         # REQUIRED: explicit column list
+      value_tolerance_mg_dl: null        # REQUIRED
+      concordant_policy: null            # REQUIRED: keep_first | keep_last | mean | reject_all | error
+      conflicting_policy: null           # REQUIRED: keep_first | keep_last | mean | reject_all | error
+
+episodes:
+  columns:
+    timestamp: specimen_time
+    value: creatinine_mg_dl
+    subject_id: subject_id
+    hadm_id: hadm_id
+  admission_bounded: true
+  baseline:
+    method: null                        # REQUIRED: minimum | median | mean | latest | earliest
+    lookback_hours: null                 # REQUIRED
+    minimum_measurements: null           # REQUIRED
+  onset:
+    absolute_rise_mg_dl: 0.3
+    window_hours: 48
+    boundary: inclusive
+    tie_breaker: null                    # REQUIRED: earliest | largest_rise
+  recovery:
+    threshold_above_baseline_mg_dl: 0.3
+    window_hours: 48
+    time_boundary: inclusive
+    value_comparison: lt
+    sustained_hours: 48
+  follow_up:
+    duration_days: 7
+    boundary: null                       # REQUIRED: inclusive | exclusive
+  peak:
+    window_end: null                     # REQUIRED: follow_up | phenotype_horizon
+    boundary: null                       # REQUIRED: inclusive | exclusive
+    tie_breaker: null                    # REQUIRED: earliest | latest
+  relapse:
+    window_days: 7
+    anchor: null                         # REQUIRED: onset | recovery
+    comparator: null                     # REQUIRED: episode_baseline | recovery_nadir | rolling_baseline
+    boundary: null                       # REQUIRED: inclusive | exclusive
+  observation:
+    max_gap_hours: null                  # REQUIRED
+    endpoint_tolerance_hours: null        # REQUIRED
+    minimum_post_onset_measurements: null # REQUIRED
+  duplicates:
+    exact: null                          # REQUIRED: drop | error
+    conflicting_timestamp: null          # REQUIRED: ambiguous | error | first | last | mean
+  admission_censoring:
+    hadm_id_column: hadm_id
+    discharge_time_column: dischtime
+    death_time_column: deathtime
+    endpoint_precedence: null            # REQUIRED
+    horizon_boundary: null               # REQUIRED
+    unknown_endpoint_reason: null         # REQUIRED
+  # Secondary only: peak-to-recovery timing, separate from primary labels.
+  recovery_timing_sensitivity:
+    enabled: true
+    reference_time_column: peak_time
+    baseline_column: baseline_value
+    threshold_above_baseline_mg_dl: 0.3
+    value_comparison: lt
+    fast_max_hours: 48
+    intermediate_max_hours: 240
+    time_boundary: null                   # REQUIRED: inclusive | exclusive
+    sustained_hours: null                 # REQUIRED; use 0 only if protocol chooses first return
+    max_gap_hours: null                   # REQUIRED observation-density rule
+    endpoint_tolerance_hours: null        # REQUIRED
+    minimum_measurements: null            # REQUIRED
+    duplicate_policy: null                # REQUIRED: error | drop_exact
+
+representations:
+  window_start_column: null              # REQUIRED
+  window_end_column: null                # REQUIRED
+  window_start_boundary: null            # REQUIRED: inclusive | exclusive
+  window_end_boundary: null              # REQUIRED: inclusive | exclusive
+  max_length: null                       # REQUIRED
+  truncation: null                       # REQUIRED: head | tail | error
+  value_transform: null                  # REQUIRED: raw | delta_from_baseline | ratio_to_baseline | log
+  time_features: null                    # REQUIRED: explicit list
+  # REQUIRED. Include count/distinct count, min/max/mean/std/median/range,
+  # repeated min/max counts, duration, and all gap summaries.
+  summary_features: null
+  slope_hours_per_unit: null             # REQUIRED
+  permutation_seeds: [null, null, null]  # REQUIRED: exactly three unique integers
+
+matching:
+  class_a: transient
+  class_b: persistent
+  selection_seed: null                   # REQUIRED
+  # REQUIRED mapping with explicit bins. At minimum include count,
+  # duration_hours, baseline_creatinine_mg_dl, and peak_value.
+  coarsening: null
+  minimum_pairs_per_split: null          # REQUIRED: split -> minimum pair count
+  maximum_absolute_smd: null             # REQUIRED
+
+splitting:
+  train_fraction: null                   # REQUIRED
+  validation_fraction: null              # REQUIRED
+  test_fraction: null                    # REQUIRED
+  stratification: null                   # REQUIRED: none | single_label | phenotype_signature
+  split_seed: null                       # REQUIRED; fixed across model runs
+  rare_stratum_policy: null              # REQUIRED: error | unstratified
+
+models:
+  seeds: [null, null, null]              # REQUIRED: exactly three unique integers
+  tabular_preprocessing:
+    scaling: null                        # REQUIRED: none | standard
+    missing_values: null                 # REQUIRED: error | median
+  sequence_preprocessing:
+    scaling: null                        # REQUIRED: none | standard
+    missing_values: null                 # REQUIRED: error | median
+  sequence_training:
+    batch_size: null
+    max_epochs: null
+    learning_rate: null
+    weight_decay: null
+    optimizer: null                      # REQUIRED: adam | adamw | sgd
+    patience: null
+    min_delta: null
+    early_stopping_metric: null          # REQUIRED: validation_loss
+    device: null
+    num_workers: null
+    pin_memory: null
+    deterministic_algorithms: null
+    class_weight: null                   # Explicit null, "balanced", or class map
+    gradient_clip_norm: null             # Explicit null or positive number
+    optimizer_parameters: null           # REQUIRED: explicit mapping (may be empty)
+    # momentum: null                     # REQUIRED only when optimizer is sgd
+  lstm:
+    hidden_dim: null
+    num_layers: null
+    dropout: null
+    bidirectional: null
+    projection_dim: null                 # Explicit null or integer
+  transformer:
+    d_model: null
+    nhead: null
+    num_layers: null
+    dim_feedforward: null
+    dropout: null
+    max_sequence_length: null
+    positional_encoding: null            # REQUIRED: learned | sinusoidal | none
+    pooling: null                        # REQUIRED: mean | last | first
+  logistic_regression:
+    C: null
+    penalty: null                        # Explicit null or penalty name
+    solver: null
+    max_iter: null
+    tol: null
+    fit_intercept: null
+    class_weight: null                   # Explicit null, "balanced", or class map
+    n_jobs: null                         # Explicit null or integer
+  xgboost:
+    parameters:
+      n_estimators: null
+      max_depth: null
+      learning_rate: null
+      min_child_weight: null
+      subsample: null
+      colsample_bytree: null
+      reg_alpha: null
+      reg_lambda: null
+      objective: null
+      eval_metric: null
+      n_jobs: null
+      tree_method: null
+      verbosity: null
+    fit_parameters: null                 # REQUIRED: explicit mapping (may be empty)
+    class_weight: null                   # Explicit null, "balanced", or class map
+
+metrics:
+  binary:
+    labels: null                         # REQUIRED: [transient, persistent]
+    threshold: null
+    positive_label: null
+    missing_class_policy: null           # REQUIRED: raise | nan | skip
+    zero_division: null                  # REQUIRED: 0 | 1 | warn
+  multiclass:
+    labels: null                         # REQUIRED: [transient, persistent, relapsing]
+    decision_rule: null                  # REQUIRED: argmax
+    missing_class_policy: null           # REQUIRED: raise | nan | skip
+    zero_division: null                  # REQUIRED: 0 | 1 | warn
+  aggregation:
+    ddof: null
+  bootstrap:
+    n_resamples: null
+    confidence_level: null
+    seed: null
+    missing_class_policy: null           # REQUIRED: raise | skip
+    interval_method: null                # REQUIRED: percentile

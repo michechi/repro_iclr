@@ -1,0 +1,52 @@
+{
+  "aggregation": "equal heads within each patient/layer, then equal patients",
+  "entropy_definition": "minus sum a_j log(a_j), divided by log of visible token count",
+  "event_mass_definition": "sum of readout attention on complete visible CCS-event tokens",
+  "generator_sha256": "7e66c4b21c0ca7efa029769901ee2a78767609bb4ce8cefe9d1733f0eba90462",
+  "limitations": "encoder right truncation; different masks/tokenizations/readouts; Qwen recurrent blocks excluded",
+  "patients": 1000,
+  "positive_patients": 77,
+  "scope": "replot completed audits; separately condition-trained checkpoints; no new inference",
+  "sources": [
+    {
+      "condition": "ordered",
+      "directory": "results/encoder_oc_ckd_attention_20260923/attention/bert_ckd_ordered",
+      "model": "BERT-base"
+    },
+    {
+      "condition": "shuffled",
+      "directory": "results/encoder_oc_ckd_attention_20260923/attention/bert_ckd_shuffled",
+      "model": "BERT-base"
+    },
+    {
+      "condition": "ordered",
+      "directory": "results/encoder_oc_ckd_attention_20260923/attention/roberta_ckd_ordered",
+      "model": "RoBERTa-base"
+    },
+    {
+      "condition": "shuffled",
+      "directory": "results/encoder_oc_ckd_attention_20260923/attention/roberta_ckd_shuffled",
+      "model": "RoBERTa-base"
+    },
+    {
+      "condition": "ordered",
+      "directory": "results/llama8_oc_ckd_attention_20260924/attention/llama8_ckd_ordered",
+      "model": "Llama-3.1-8B"
+    },
+    {
+      "condition": "shuffled",
+      "directory": "results/llama8_oc_ckd_attention_20260924/attention/llama8_ckd_shuffled",
+      "model": "Llama-3.1-8B"
+    },
+    {
+      "condition": "ordered",
+      "directory": "results/qwen_oc_clinical_attention_20260922_seed9950/clinical_attention/ordered",
+      "model": "Qwen3.8-27B"
+    },
+    {
+      "condition": "shuffled",
+      "directory": "results/qwen_oc_clinical_attention_20260922_seed9950/clinical_attention/shuffled",
+      "model": "Qwen3.8-27B"
+    }
+  ]
+}

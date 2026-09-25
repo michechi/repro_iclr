@@ -1,0 +1,30 @@
+{
+  "shuffle_seed": 777,
+  "source": "data/simulation/tested",
+  "splits": {
+    "kip_m4/train": {
+      "rows": 400000,
+      "label_preserved_rate": 0.50003
+    },
+    "kip_m4/val": {
+      "rows": 50000,
+      "label_preserved_rate": 0.49852
+    },
+    "kip_m4/test": {
+      "rows": 50000,
+      "label_preserved_rate": 0.50338
+    },
+    "kip_m6/train": {
+      "rows": 400000,
+      "label_preserved_rate": 0.50093
+    },
+    "kip_m6/val": {
+      "rows": 50000,
+      "label_preserved_rate": 0.4981
+    },
+    "kip_m6/test": {
+      "rows": 50000,
+      "label_preserved_rate": 0.49872
+    }
+  }
+}

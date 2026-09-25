@@ -1,0 +1,31 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Feature-family test AUC, with neural and oracle references.
+N/A indicates that no generating lag exists. All-lag rows use
+stacked gap-specific pair counts. Near-oracle pair-feature performance
+establishes feature sufficiency, not a causal explanation of neural predictions.}
+\label{tab:signal_decomposition}
+\begin{tabular}{lccccc}
+\toprule
+Method & OC-Det. & OC-Noisy & GPC & KIP-4 & KIP-6 \\
+\midrule
+Chance & .500 & .500 & .500 & .500 & .500 \\
+Key-count baseline & .774 & .574 & .503 & .500 & .500 \\
+Full-count XGBoost & .816 & .584 & .503 & .503 & .500 \\
+Best contiguous \(k\)-gram & .819 & .586 & .502 & .504 & .504 \\
+Known-lag pair LR & .997 & .671 & N/A & N/A & N/A \\
+All-lag pair LR ($L_1$) & .997 & .632 & .498 & .500 & .502 \\
+All-lag pair XGBoost & .998 & .667 & .497 & .590 & .501 \\
+Best neural model & .999 & .671 & .503 & 1.000 & .505 \\
+Oracle AUC & 1.000 & .670 & 1.000 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{\linewidth}
+\footnotesize
+KIP key counts are constant, giving AUC $0.5$ exactly; a known generating
+lag is not applicable. New OC/GPC all-lag results and KIP $L_1$ results use the first
+100,000 training and 50,000 test sequences. KIP neural references are the highest recorded test AUCs
+across completed ordered runs, not seed averages.
+\end{minipage}
+\end{table}

@@ -1,0 +1,74 @@
+{
+  "arm": "qwen27b_qlora",
+  "best_epoch": 9,
+  "checkpoint_policy": "existing selected adapter/head checkpoint referenced by path and SHA256; original run untouched",
+  "completion_method": "user_requested_saved_checkpoint_evaluation",
+  "early_stopped": false,
+  "epochs_completed": 9,
+  "fraction": 0.5,
+  "is_smoke": false,
+  "mode": "ordered",
+  "reference_checkpoint": {
+    "epoch": 9,
+    "path": "results/kip_m4_data_efficiency_20260920_seed9950/protocol/amendment_20260921/checkpoint/qwen27b_fraction050_best_epoch009.pt",
+    "sha256": "e457be42b411594813aabeaf8acac414f2f99e7d5d3d7075b9288959eb8ea32f"
+  },
+  "rows": {
+    "test": 50000,
+    "train": 200000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "selected_weights_path": "results/kip_m4_data_efficiency_20260920_seed9950/protocol/amendment_20260921/checkpoint/qwen27b_fraction050_best_epoch009.pt",
+  "selected_weights_saved": true,
+  "status": "completed",
+  "stopping_rule": {
+    "authorized_action_if_met": "stop_current_arm_and_skip_larger_training_fractions",
+    "comparison": "exact",
+    "met": true,
+    "metric": "full_fixed_test_auc",
+    "target": 1.0
+  },
+  "tag": "kip_m4",
+  "test": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "loss": 2.266094914994028e-06,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "test_at_0_5": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "test_informed_stopping": true,
+  "threshold_selected_on": "validation",
+  "training_run_completed": false,
+  "training_seconds": 23333.647655026012,
+  "validation": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "loss": 1.5935407783945265e-06,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.1
+  },
+  "validation_at_0_5": {
+    "accuracy": 1.0,
+    "auc": 1.0,
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "threshold": 0.5
+  },
+  "wall_seconds": 354.190046912001
+}

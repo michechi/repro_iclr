@@ -1,0 +1,70 @@
+{
+  "arm": "qwen27b_qlora",
+  "best_epoch": 6,
+  "checkpoint_policy": "selected trainable adapter/head saved; full weights CPU RAM only; unfinished fit restarts",
+  "early_stopped": true,
+  "epochs_completed": 6,
+  "finalization_seconds": 376.51818352000555,
+  "fraction": 1.0,
+  "is_smoke": false,
+  "learning_rate_schedule": "original schedule preserved through epoch cap",
+  "mode": "ordered",
+  "original_max_epochs": 20,
+  "rows": {
+    "test": 50000,
+    "train": 400000,
+    "val": 50000
+  },
+  "schema_version": 1,
+  "seed": 9950,
+  "selected_by": "validation_loss",
+  "selected_weights_saved": true,
+  "status": "completed",
+  "stop_reason": "user_epoch_cap",
+  "stopping_rule": "user_requested_epoch_cap",
+  "tag": "ocnoise",
+  "test": {
+    "accuracy": 0.41536,
+    "auc": 0.6653328762089209,
+    "f1": 0.586908597591996,
+    "loss": 0.6150301460456848,
+    "precision": 0.4153366134645386,
+    "recall": 1.0,
+    "threshold": 0.23999999999999994
+  },
+  "test_at_0_5": {
+    "accuracy": 0.69614,
+    "auc": 0.6653328762089209,
+    "f1": 0.5709767599469121,
+    "precision": 0.6902437359186181,
+    "recall": 0.48685351054608494,
+    "threshold": 0.5
+  },
+  "test_informed_stopping": false,
+  "threshold_selected_on": "validation",
+  "training_seconds": 30333.10030422604,
+  "user_epoch_cap": 6,
+  "user_stop_record_sha256": "dfe6bdbd12cda5df3a33504159f2bc06dd371ffed49be4573106467687c5bfc0",
+  "validation": {
+    "accuracy": 0.41744,
+    "auc": 0.6668850598641213,
+    "f1": 0.5889591329871303,
+    "loss": 0.615474152545929,
+    "precision": 0.4174017401740174,
+    "recall": 0.9999520820355551,
+    "threshold": 0.23999999999999994
+  },
+  "validation_at_0_5": {
+    "accuracy": 0.69582,
+    "auc": 0.6668850598641213,
+    "f1": 0.5719753468606648,
+    "precision": 0.6929896344789962,
+    "recall": 0.48694235468877284,
+    "threshold": 0.5
+  },
+  "validation_reproduction": {
+    "auc_absolute_error": 0.0,
+    "loss_absolute_error": 0.0
+  },
+  "wall_seconds": 30743.03736288601
+}

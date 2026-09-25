@@ -1,0 +1,43 @@
+{
+  "attention_readout": "CLS token 0",
+  "capture_probability_delta": 0.0,
+  "causal": false,
+  "condition": "shuffled",
+  "context_policy": "first 512 tokens; complete visible events only; partial event tokens grouped with other tokens",
+  "full_test_reference": {
+    "accuracy": 0.8862639217009788,
+    "auc": 0.8348102337378571,
+    "auroc": 0.8348102337378571,
+    "average_precision": 0.35910313711327047,
+    "f1": 0.4098073555166375,
+    "loss": 0.22184886274167182,
+    "positive_rows": 229,
+    "precision": 0.34210526315789475,
+    "recall": 0.5109170305676856,
+    "rows": 2963,
+    "threshold": 0.3199999999999999
+  },
+  "interpretation": "descriptive CLS attention; truncation changes visible code sets across ordered/shuffled inputs",
+  "is_smoke": false,
+  "max_reference_probability_error": 2.9655456534882774e-08,
+  "mean_reference_probability_error": 1.4367416895149852e-09,
+  "mean_visible_event_fraction": 0.9314159151013294,
+  "model": "bert",
+  "sample_metrics": {
+    "accuracy": 0.93,
+    "auc": 0.8297617875082665,
+    "auroc": 0.8297617875082665,
+    "average_precision": 0.45079305521285895,
+    "f1": 0.43548387096774194,
+    "positive_rows": 77,
+    "precision": 0.574468085106383,
+    "recall": 0.35064935064935066,
+    "rows": 1000,
+    "threshold": 0.5
+  },
+  "samples": 1000,
+  "status": "completed",
+  "task": "ckd",
+  "truncated_patients": 191,
+  "wall_seconds": 23.48874047002755
+}

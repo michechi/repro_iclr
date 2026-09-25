@@ -1,0 +1,15 @@
+{
+  "models": {
+    "bert": {
+      "interpretation": "condition-trained weights and truncated visible code sets can both differ",
+      "mean_visible_code_distribution_overlap": 0.8497297142582321,
+      "patients": 1000
+    },
+    "roberta": {
+      "interpretation": "condition-trained weights and truncated visible code sets can both differ",
+      "mean_visible_code_distribution_overlap": 0.8481831249477717,
+      "patients": 1000
+    }
+  },
+  "status": "completed"
+}

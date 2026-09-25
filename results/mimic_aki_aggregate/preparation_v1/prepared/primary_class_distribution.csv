@@ -1,0 +1,7 @@
+split,label,n_episodes,n_subjects,episode_fraction
+test,persistent,1716,1716,0.7246621621621622
+test,transient,652,652,0.27533783783783783
+train,persistent,7983,7983,0.7263876251137398
+train,transient,3007,3007,0.2736123748862602
+validation,persistent,1705,1705,0.726768968456948
+validation,transient,641,641,0.273231031543052

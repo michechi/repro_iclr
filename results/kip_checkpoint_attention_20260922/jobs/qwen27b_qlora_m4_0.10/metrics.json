@@ -1,0 +1,47 @@
+{
+  "causal": true,
+  "counterfactuals": {
+    "distractor_swap": {
+      "accuracy_at_0_5": 0.495,
+      "mean_absolute_probability_change": 0.015271023958921432,
+      "prediction_flip_rate": 0.155,
+      "samples": 200
+    },
+    "key_swap": {
+      "accuracy_at_0_5": 0.5,
+      "mean_absolute_probability_change": 0.014350030124187469,
+      "prediction_flip_rate": 0.17,
+      "samples": 200
+    }
+  },
+  "full_test_auc_reference": 0.4953126430346533,
+  "is_smoke": false,
+  "key": "qwen27b_qlora_m4_0.10",
+  "layer_ids": [
+    3,
+    7,
+    11,
+    15,
+    19,
+    23,
+    27,
+    31,
+    35,
+    39,
+    43,
+    47,
+    51,
+    55,
+    59,
+    63
+  ],
+  "max_reference_probability_error": 0.013668824110794064,
+  "mean_reference_probability_error": 0.002569805180157396,
+  "sample_accuracy_at_0_5": 0.524,
+  "sample_ap": 0.5250900567868428,
+  "sample_auc": 0.5243423894782318,
+  "samples": 1000,
+  "status": "completed",
+  "tag": "kip_m4",
+  "wall_seconds": 254.42267703998368
+}

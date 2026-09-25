@@ -1,0 +1,13 @@
+{
+  "dataset": "GPC",
+  "family": "stacked_all_lag",
+  "feature_dimensions": 12844,
+  "fit_seconds": 73.12650314300117,
+  "model": "xgboost",
+  "n_test": 50000,
+  "n_train": 100000,
+  "seed": 20260421,
+  "tag": "test_just_pair",
+  "task": "gpc_xgb",
+  "test_auc": 0.49722273564036223
+}

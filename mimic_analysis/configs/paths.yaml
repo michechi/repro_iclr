@@ -1,0 +1,10 @@
+# Raw data and output roots for the MIMIC-IV cancer trajectory pipeline.
+# Relative to mimic_analysis/, independent of the current working directory.
+# Override any key with MIMIC_CANCER_<UPPERCASE_KEY> in the environment.
+
+mimic_hosp: data/hosp
+mimic_note: data/mimiciv_note/physionet.org/files/mimic-iv-note/2.2/note
+dfci_imaging_weights: data/dfci_models/physionet.org/files/dfci-cancer-outcomes-ehr/1.0.0/models/DFCI-student-imaging/dfci-student-imaging.pt
+
+intermediate: data/intermediate
+processed: data/processed

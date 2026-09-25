@@ -1,0 +1,70 @@
+{
+  "best_epoch": 5,
+  "condition": "ordered",
+  "epochs_completed": 10,
+  "is_smoke": false,
+  "model": "bert",
+  "selected_by": "validation_loss",
+  "selected_checkpoint_sha256": "60be70cb16f43b897f4778271e5a21d5b0c9c86ae77fb67a92c3dcd365d66fc2",
+  "status": "completed",
+  "stop_reason": "validation_patience",
+  "task": "ckd",
+  "test": {
+    "accuracy": 0.8724265946675667,
+    "auc": 0.8397216995748189,
+    "auroc": 0.8397216995748189,
+    "average_precision": 0.34785702561772375,
+    "f1": 0.38636363636363635,
+    "loss": 0.21961362789178515,
+    "positive_rows": 229,
+    "precision": 0.30749354005167956,
+    "recall": 0.519650655021834,
+    "rows": 2963,
+    "threshold": 0.2899999999999999
+  },
+  "test_informed_stopping": false,
+  "threshold_selected_on": "validation",
+  "tokenization": {
+    "test": {
+      "context_policy": "native 512-token right truncation",
+      "max_full_tokens": 9586,
+      "max_input_tokens": 512,
+      "min_full_tokens": 46,
+      "rows": 2963,
+      "truncated_fraction": 0.1829227134660817,
+      "truncated_rows": 542
+    },
+    "train": {
+      "context_policy": "native 512-token right truncation",
+      "max_full_tokens": 7570,
+      "max_input_tokens": 512,
+      "min_full_tokens": 43,
+      "rows": 8887,
+      "truncated_fraction": 0.1773376842579048,
+      "truncated_rows": 1576
+    },
+    "val": {
+      "context_policy": "native 512-token right truncation",
+      "max_full_tokens": 4745,
+      "max_input_tokens": 512,
+      "min_full_tokens": 44,
+      "rows": 2963,
+      "truncated_fraction": 0.18157273034087074,
+      "truncated_rows": 538
+    }
+  },
+  "validation": {
+    "accuracy": 0.8866014174822815,
+    "auc": 0.8591191944876584,
+    "auroc": 0.8591191944876584,
+    "average_precision": 0.39432062069126717,
+    "f1": 0.44370860927152317,
+    "loss": 0.20957476603589548,
+    "positive_rows": 229,
+    "precision": 0.35733333333333334,
+    "recall": 0.5851528384279476,
+    "rows": 2963,
+    "threshold": 0.2899999999999999
+  },
+  "wall_seconds": 194.66958257299848
+}
