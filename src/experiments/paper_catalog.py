@@ -35,9 +35,7 @@ ROUTES = {
     "heldout-rule": {"paper": "D.4", "entrypoint": "scripts/run_paper_heldout_rule.py", "training": True},
     "parity": {"paper": "E.1-E.5, Tables 8-12", "entrypoint": "scripts/run_paper_parity.py", "training": True},
     "gpc-helpers": {"paper": "5, Appendix E opening helper ladder", "entrypoint": "scripts/run_paper_gpc_helpers.py", "training": True},
-    "run-summary": {"paper": "Tables 3-5; Figures 1-2 data", "entrypoint": "scripts/summarize_paper_runs.py", "training": False},
     "clinical": {"paper": "4.4, F, Tables 13-15", "entrypoint": "scripts/run_paper_clinical.py", "training": True},
-    "attention": {"paper": "G, Figures 3-5", "entrypoint": "scripts/reproduce_figures.py", "training": False},
 }
 
 

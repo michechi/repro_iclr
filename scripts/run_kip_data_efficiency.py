@@ -34,7 +34,6 @@ MICROBATCHES = {arm: 16 for arm in ARM_ORDER}
 TAGS = ("kip_m4", "kip_m6")
 SOURCE_FILES = (
     "scripts/run_kip_data_efficiency.py",
-    "scripts/plot_kip_data_efficiency.py",
     "src/experiments/kip_data_efficiency.py",
     "src/experiments/kip_efficiency_models.py",
     "src/experiments/paper_pretrained_training.py",
@@ -266,20 +265,6 @@ def publish(args, state):
     update_summary(args, state)
 
 
-def update_plots(args):
-    log_path = args.run_root / "plot.log"
-    try:
-        with log_path.open("a") as log:
-            result = subprocess.run([sys.executable, "-B", str(ROOT / "scripts/plot_kip_data_efficiency.py"),
-                                     "--run-root", str(args.run_root)],
-                                    cwd=ROOT, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
-                                    env=environment(args), timeout=180)
-        return {"status": "completed" if result.returncode == 0 else "failed",
-                "exit_code": result.returncode, "log": str(log_path), "updated_at_unix": time.time()}
-    except Exception as exc:
-        return {"status": "failed", "error": str(exc), "log": str(log_path), "updated_at_unix": time.time()}
-
-
 def is_oom(log_path):
     with Path(log_path).open("rb") as stream:
         stream.seek(max(0, stream.seek(0, os.SEEK_END) - 256 * 1024))
@@ -337,9 +322,6 @@ def run_job(args, plan, state, record, batch, eval_batch, lock_fds, optimizer_of
                           finished_at_unix=time.time())
             state["child_pid"] = None
             publish(args, state)
-            if not record["is_smoke"]:
-                state["plot_status"] = update_plots(args)
-                publish(args, state)
             return True, batch, eval_batch, optimizer_offload
         except Exception as exc:
             attempt.update(status="failed", error=str(exc), finished_at_unix=time.time())

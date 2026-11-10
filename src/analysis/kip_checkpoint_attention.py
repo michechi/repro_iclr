@@ -51,7 +51,7 @@ def discover_jobs():
     jobs = []
     efficiency = ROOT / "results/kip_m4_data_efficiency"
     for arm in ("qwen27b_qlora", "qwen14b_lora", "llama8b_lora", "llama8b_full"):
-        for fraction in ("0.30", "0.50", "0.01", "0.10", "0.75", "1.00"):
+        for fraction in ("1.00", "0.75", "0.50", "0.30", "0.10", "0.01"):
             run = efficiency / arm / f"fraction_{fraction}/attempt_001"
             reference = run
             checkpoint = run / "best_trainable.pt"
@@ -482,7 +482,7 @@ def analyze_job(run_root, key, limit=None):
                    sample_auc=float(roc_auc_score(labels, probabilities)) if len(np.unique(labels)) == 2 else None,
                    sample_ap=float(average_precision_score(labels, probabilities)) if labels.any() else None,
                    sample_accuracy_at_0_5=float(np.mean((probabilities >= .5) == labels)),
-                   full_test_auc_reference=read_json(Path(job["reference"]) / "metrics.json")["test"]["auc"],
+                   full_test_reference=read_json(Path(job["reference"]) / "metrics.json")["test"],
                    max_reference_probability_error=float(reference_error.max()),
                    mean_reference_probability_error=float(reference_error.mean()), causal=causal,
                    layer_ids=layer_ids, counterfactuals={}, wall_seconds=time.monotonic() - started)
