@@ -6,7 +6,23 @@ import json
 
 PROTOCOL_ID = "paper_parity_v1"
 MODELS = ("transformer", "lstm", "bert")
-MAIN_KEYS = (22, 3, 16, 9, 23, 13)  # W,D,Q,J,X,N; zero-based letters
+
+
+def alphabet_key_indices(key_letters, alphabet_size=26):
+    """Map key symbols to zero-based alphabet indices for integer-encoded parity runs."""
+    if isinstance(key_letters, str):
+        key_letters = list(key_letters)
+    if not key_letters or len(set(key_letters)) != len(key_letters):
+        raise ValueError("parity keys must be nonempty and distinct")
+    indices = []
+    for key in key_letters:
+        if not isinstance(key, str) or len(key) != 1 or not "A" <= key <= "Z":
+            raise ValueError("parity key letters must be uppercase A-Z")
+        index = ord(key) - ord("A")
+        if index >= alphabet_size:
+            raise ValueError("key letter exceeds the configured alphabet size")
+        indices.append(index)
+    return indices
 
 
 def gpc_label(sequence, key_ids):
@@ -53,16 +69,23 @@ def recipe(section, model):
     return result
 
 
-def build_plan(section="all"):
+def build_plan(section="all", *, e5_keys="WDQJXN"):
+    """Build Appendix E jobs. ``e5_keys`` selects the curriculum key set (paper default: WDQJXN)."""
     if section not in {"all", "E1", "E2", "E3", "E4", "E5"}:
         raise ValueError("section must be all or E1..E5")
+    e5_key_ids = alphabet_key_indices(e5_keys, alphabet_size=26)
     jobs, references = [], []
 
     def add(sec, model, ell, m, n, seed, *, regime="fixed", stage=None):
         key = f"{sec}_{model}_l{ell}_m{m}_n{n}_{regime}_seed{seed}"
         if stage:
             key += f"_stage{stage}"
-        keys = list(MAIN_KEYS) if sec == "E5" else list(range(m))
+        if sec == "E5":
+            if len(e5_key_ids) != m:
+                raise ValueError(f"E5 requires exactly {m} keys, got {len(e5_key_ids)}")
+            keys = list(e5_key_ids)
+        else:
+            keys = list(range(m))
         data_id = f"{sec}_l{ell}_m{m}_n{n}"
         config = recipe(sec, model)
         job = {"id": key, "section": sec, "table": {"E1": 8, "E2": 9, "E3": 10, "E4": 11, "E5": 12}[sec],
@@ -74,7 +97,7 @@ def build_plan(section="all"):
                "label_rule": "gpc_definition_3_7_even_number_of_even_key_counts",
                "config": config, "depends_on": None}
         if stage == 2:
-            job["depends_on"] = f"E5_{model}_l26_m6_n10_fixed_seed{seed}_stage1"
+            job["depends_on"] = f"E5_{model}_l26_m{m}_n10_fixed_seed{seed}_stage1"
         jobs.append(job)
 
     if section in {"all", "E1"}:

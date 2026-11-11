@@ -22,6 +22,8 @@ def parse_args(argv=None):
     p.add_argument("--train-size", type=int, choices=[4000, 40000, 100000, 120000, 200000, 300000, 400000], default=400000)
     p.add_argument("--feature", choices=FEATURES, default="count26")
     p.add_argument("--k", type=int, default=2)
+    p.add_argument("--shuffle-control", choices=["none", "train_shuffled", "test_shuffled"], default="none",
+                   help="Section 5 order controls: retrain on shuffled inputs or evaluate test-only shuffles, keeping original labels")
     p.add_argument("--model-path", type=Path)
     p.add_argument("--device", choices=["cpu", "cuda"], default="cuda")
     p.add_argument("--threads", type=int, default=4)

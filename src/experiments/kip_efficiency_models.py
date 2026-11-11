@@ -7,16 +7,18 @@ import torch
 from torch import nn
 
 
-ARMS = ("qwen27b_qlora", "qwen14b_lora", "llama8b_lora", "llama8b_full")
+ARMS = ("qwen27b_qlora", "qwen14b_lora", "qwen14b_qlora", "llama8b_lora", "llama8b_full")
 MODEL_NAMES = {
     "qwen27b_qlora": "Qwen/Qwen3.8-27B",
     "qwen14b_lora": "Qwen/Qwen2.5-14B",
+    "qwen14b_qlora": "Qwen/Qwen2.5-14B",  # Appendix G KIP attention recipe
     "llama8b_lora": "meta-llama/Llama-3.1-8B",
     "llama8b_full": "meta-llama/Llama-3.1-8B",
 }
 _ALIASES = {
     "qwen27_qlora": "qwen27b_qlora", "qwen38_27b_qlora": "qwen27b_qlora",
     "qwen14_lora": "qwen14b_lora", "qwen25_14b_lora": "qwen14b_lora",
+    "qwen14_qlora": "qwen14b_qlora", "qwen25_14b_qlora": "qwen14b_qlora",
     "llama8_lora": "llama8b_lora", "llama8_full": "llama8b_full",
 }
 ATTENTION_TARGETS = ("q_proj", "k_proj", "v_proj", "o_proj")

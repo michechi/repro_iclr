@@ -71,7 +71,7 @@ class PaperDecoderClassifier(nn.Module):
         self.config.num_labels = 2
         width = self.config.hidden_size
         embedding = causal_lm.get_input_embeddings().weight
-        self.score = nn.Sequential(nn.Linear(width, width // 2), nn.Tanh(), nn.Dropout(.1),
+        self.score = nn.Sequential(nn.Linear(width, width // 2), nn.Tanh(), nn.Dropout(CONFIG.head_dropout),
                                    nn.Linear(width // 2, 2)).to(device=embedding.device, dtype=torch.float32)
 
     def get_input_embeddings(self):
@@ -116,19 +116,19 @@ def load_paper_model(model_key, model_path, *, tuning=None, gradient_checkpointi
         raise ValueError("QLoRA requires CUDA")
     config = AutoConfig.from_pretrained(source, local_files_only=True, trust_remote_code=False)
     text_config = getattr(config, "text_config", config)
-    family_types = {"bert": {"bert"}, "roberta": {"roberta"}, "llama1b": {"llama"},
-                    "llama8b": {"llama"}, "llama70b": {"llama"}, "qwen14b": {"qwen2"},
-                    "qwen4b": {"qwen3"}, "qwen27b": {"qwen3_5"}}
+    family_types = {"bert": {"bert"}, "roberta": {"roberta"}, "roberta_base": {"roberta"},
+                    "llama1b": {"llama"}, "llama8b": {"llama"}, "llama70b": {"llama"},
+                    "qwen14b": {"qwen2"}, "qwen4b": {"qwen3"}, "qwen27b": {"qwen3_5"}}
     if config.model_type not in family_types[model_key]:
         raise ValueError(f"{model_key}: unexpected checkpoint model_type {config.model_type}")
-    expected_shapes = {"bert": (768, 12), "llama1b": (2048, 16), "llama8b": (4096, 32),
+    expected_shapes = {"bert": (768, 12), "roberta": (1024, 24), "roberta_base": (768, 12),
+                       "llama1b": (2048, 16), "llama8b": (4096, 32),
                        "llama70b": (8192, 80), "qwen14b": (5120, 48)}
     actual_shape = (text_config.hidden_size, text_config.num_hidden_layers)
     if not allow_smoke_model and model_key in expected_shapes and actual_shape != expected_shapes[model_key]:
         raise ValueError(f"{model_key}: expected hidden width/layers {expected_shapes[model_key]}, got {actual_shape}")
-    if model_key == "roberta" and (config.model_type != "roberta" or config.hidden_size != 1024
-                                   or config.num_hidden_layers != 24):
-        raise ValueError("RoBERTa requires roberta-large (24 layers, hidden size 1024)")
+    if model_key in {"roberta", "roberta_base"} and config.model_type != "roberta":
+        raise ValueError(f"{model_key} requires a RoBERTa checkpoint")
     from src.experiments.paper_data import sha256
     weight_files = sorted(source.glob("*.safetensors"))
     if not weight_files:
@@ -195,7 +195,8 @@ def load_paper_model(model_key, model_path, *, tuning=None, gradient_checkpointi
                                and "vision" not in name and hasattr(module, "weight"))
         if set(targets) - {name.rsplit(".", 1)[-1] for name in adapted_names}:
             raise ValueError("model checkpoint lacks LoRA targets")
-        base = get_peft_model(base, LoraConfig(r=8, lora_alpha=16, lora_dropout=.1, bias="none",
+        base = get_peft_model(base, LoraConfig(r=CONFIG.lora_r, lora_alpha=CONFIG.lora_alpha,
+                    lora_dropout=CONFIG.lora_dropout, bias="none",
                     target_modules=adapted_names,
                     task_type=TaskType.SEQ_CLS if spec["family"] == "encoder" else TaskType.CAUSAL_LM))
         for parameter in base.parameters():
@@ -228,7 +229,8 @@ def load_paper_model(model_key, model_path, *, tuning=None, gradient_checkpointi
                 "environment_versions": {name: importlib.metadata.version(name) for name in ("torch", "transformers", "peft", "numpy")},
                 "checkpoint_model_type": config.model_type, "model_class": type(model).__name__,
                 "objective": CONFIG.decoder_loss if spec["family"] == "decoder" else CONFIG.encoder_loss,
-                "lora": None if spec["tuning"] == "full" else {"r": 8, "alpha": 16, "dropout": .1,
+                "lora": None if spec["tuning"] == "full" else {"r": CONFIG.lora_r, "alpha": CONFIG.lora_alpha,
+                    "dropout": CONFIG.lora_dropout,
                     "target_modules": targets, "adapted_module_names": adapted_names},
                 "quantization": quantization.to_dict() if quantization else None,
                 "trainable_parameters": sum(p.numel() for p in trainable.values()),
@@ -245,7 +247,7 @@ def train_paper(args):
         seed_all, sha256, subset_indices, trainable_state, validation_threshold,
     )
     from src.experiments.kip_llama_training import accumulation_samples, classifier_loss, evaluate
-    from src.experiments.paper_data import read_paper_split
+    from src.experiments.paper_data import latent_label, read_paper_split
     import pandas as pd
 
     spec = model_spec(args.model, args.tuning)
@@ -263,7 +265,9 @@ def train_paper(args):
         limit = args.train_size if split == "train" else None
         if args.smoke:
             limit = min(len(labels), 32 if split == "train" else 16)
-        indices = subset_indices(labels, limit, args.seed)
+        # Remark A.4: stratify on latent Y* before noise, not the observed label.
+        latent = np.asarray([latent_label(s, evidence["rule"]) for s in sequences], dtype=np.int64)
+        indices = subset_indices(labels, limit, args.seed, stratify_by=latent)
         selected[split] = ([sequences[i] for i in indices], labels[indices])
         provenance[split] = evidence
         np.save(output / f"{split}_indices.npy", indices, allow_pickle=False)
@@ -278,7 +282,8 @@ def train_paper(args):
                for split, data in datasets.items()}
     manifest = {**CONFIG.to_dict(), "model": model_metadata, "tag": args.tag, "seed": args.seed,
                 "rows": {k: len(v) for k, v in datasets.items()}, "data": provenance,
-                "microbatch": args.microbatch, "gradient_accumulation_steps": 16 // args.microbatch,
+                "microbatch": args.microbatch,
+                "gradient_accumulation_steps": CONFIG.effective_batch_size // args.microbatch,
                 "evaluation_batch_size": args.eval_batch_size, "requested_train_size": args.train_size,
                 "is_smoke": args.smoke,
                 "selected_indices_sha256": {split: sha256(output / f"{split}_indices.npy") for split in selected},
@@ -287,7 +292,7 @@ def train_paper(args):
     tokenizer.save_pretrained(output / "tokenizer")
     atomic_json(manifest, output / "manifest.json")
     epochs = 1 if args.smoke else CONFIG.max_epochs
-    accumulation = 16 // args.microbatch
+    accumulation = CONFIG.effective_batch_size // args.microbatch
     optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=CONFIG.learning_rate,
                                   weight_decay=CONFIG.weight_decay, betas=CONFIG.adam_betas, eps=CONFIG.adam_epsilon)
     steps = math.ceil(len(loaders["train"]) / accumulation) * epochs

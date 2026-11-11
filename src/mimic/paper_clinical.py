@@ -23,6 +23,13 @@ PROTOCOL = {
     "truncate_positive": "exclude entire first ESRD admission and all later admissions",
     "sequence_order": ["admittime", "hadm_id (tie-break)", "seq_num", "source_row (tie-break)"],
     "representation": "CCS tokens with repeated diagnoses retained",
+    # Pinned policies for Tables 13-15: keep the first CCS category on mapping
+    # conflicts; retain unmapped diagnoses as the OTHER token.
+    "ccs_mapping": {
+        "source": "codes/CCS_DX_mapping.csv",
+        "conflict_policy": "first",
+        "unmapped_policy": "other",
+    },
     "kgram": {"k": list(range(1, 8)), "splits": 5, "train_test": [.8, .2],
               "score": "mean of training conditional probabilities over contiguous k-gram occurrences",
               "unseen_probability": .5, "f1_threshold": .5},

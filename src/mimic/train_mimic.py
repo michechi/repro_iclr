@@ -110,10 +110,14 @@ class IntegerSeqDataset(Dataset):
         self.labels = labels
         self.max_seq = max_seq
         self.encoded = []
+        self.lengths = []
         for seq in sequences:
             tokens = seq.split(DELIMITER)
             ids = [code_to_idx.get(t, 0) for t in tokens]
             ids = ids[:max_seq]
+            if not ids:
+                raise ValueError("empty clinical sequence")
+            self.lengths.append(len(ids))
             ids += [0] * (max_seq - len(ids))
             self.encoded.append(ids)
 
@@ -124,6 +128,7 @@ class IntegerSeqDataset(Dataset):
         return (
             torch.tensor(self.encoded[idx], dtype=torch.long),
             torch.tensor(self.labels[idx], dtype=torch.long),
+            torch.tensor(self.lengths[idx], dtype=torch.long),
         )
 
 # ---------------------------------------------------------------------------
@@ -146,7 +151,7 @@ class TransformerClassifier(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.fc = nn.Linear(embedding_dim, num_classes)
 
-    def forward(self, x):
+    def forward(self, x, lengths=None):
         batch_size, seq_len = x.size()
         embedded = self.embedding(x) + self.pos_encoding[:, :seq_len, :]
         padding_mask = (x == 0)
@@ -170,12 +175,11 @@ class LSTMClassifier(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.fc = nn.Linear(hidden_dim, num_classes)
 
-    def forward(self, x):
-        batch_size = x.size(0)
+    def forward(self, x, lengths):
         embedded = self.embedding(x)
-        h0 = torch.zeros(self.num_layers, batch_size, self.hidden_dim, device=x.device)
-        c0 = torch.zeros(self.num_layers, batch_size, self.hidden_dim, device=x.device)
-        _, (h_n, _) = self.lstm(embedded, (h0, c0))
+        packed = nn.utils.rnn.pack_padded_sequence(
+            embedded, lengths.cpu(), batch_first=True, enforce_sorted=False)
+        _, (h_n, _) = self.lstm(packed)
         return self.fc(self.dropout(h_n[-1]))
 
 
@@ -193,12 +197,11 @@ class BiLSTMClassifier(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.fc = nn.Linear(hidden_dim * 2, num_classes)
 
-    def forward(self, x):
-        batch_size = x.size(0)
+    def forward(self, x, lengths):
         embedded = self.embedding(x)
-        h0 = torch.zeros(self.num_layers * 2, batch_size, self.hidden_dim, device=x.device)
-        c0 = torch.zeros(self.num_layers * 2, batch_size, self.hidden_dim, device=x.device)
-        _, (h_n, _) = self.lstm(embedded, (h0, c0))
+        packed = nn.utils.rnn.pack_padded_sequence(
+            embedded, lengths.cpu(), batch_first=True, enforce_sorted=False)
+        _, (h_n, _) = self.lstm(packed)
         last_hidden = torch.cat([h_n[-2], h_n[-1]], dim=1)
         return self.fc(self.dropout(last_hidden))
 
@@ -422,10 +425,10 @@ def train_dl(args):
     for epoch in range(args.epochs):
         model.train()
         train_loss = 0.0
-        for seqs, labels in train_loader:
+        for seqs, labels, lengths in train_loader:
             seqs, labels = seqs.to(device), labels.to(device)
             optimizer.zero_grad()
-            logits = model(seqs)
+            logits = model(seqs, lengths)
             loss = criterion(logits, labels)
             loss.backward()
             optimizer.step()
@@ -437,9 +440,9 @@ def train_dl(args):
         val_loss = 0.0
         val_preds, val_labels = [], []
         with torch.no_grad():
-            for seqs, labels in val_loader:
+            for seqs, labels, lengths in val_loader:
                 seqs, labels = seqs.to(device), labels.to(device)
-                logits = model(seqs)
+                logits = model(seqs, lengths)
                 loss = criterion(logits, labels)
                 val_loss += loss.item()
                 probs = torch.softmax(logits, dim=-1)[:, 1].cpu().numpy()
@@ -473,9 +476,9 @@ def train_dl(args):
     model.eval()
     val_preds, val_labels = [], []
     with torch.no_grad():
-        for seqs, labels in val_loader:
+        for seqs, labels, lengths in val_loader:
             seqs = seqs.to(device)
-            probs = torch.softmax(model(seqs), dim=-1)[:, 1].cpu().numpy()
+            probs = torch.softmax(model(seqs, lengths), dim=-1)[:, 1].cpu().numpy()
             val_preds.extend(probs)
             val_labels.extend(labels.numpy())
     threshold, val_f1 = find_optimal_threshold(val_labels, val_preds)
@@ -484,9 +487,9 @@ def train_dl(args):
     # Test evaluation
     test_preds, test_labels = [], []
     with torch.no_grad():
-        for seqs, labels in test_loader:
+        for seqs, labels, lengths in test_loader:
             seqs = seqs.to(device)
-            probs = torch.softmax(model(seqs), dim=-1)[:, 1].cpu().numpy()
+            probs = torch.softmax(model(seqs, lengths), dim=-1)[:, 1].cpu().numpy()
             test_preds.extend(probs)
             test_labels.extend(labels.numpy())
 
@@ -532,6 +535,7 @@ def train_bert(args):
     X_test, y_test = data["test"]
 
     class_weights = compute_class_weights(y_train).to(device)
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
 
     # Tokenizer
     cache_dir = os.environ.get("SCRATCH", "/tmp") + "/cache"
@@ -606,8 +610,8 @@ def train_bert(args):
             input_ids = batch["input_ids"].to(device)
             attn_mask = batch["attention_mask"].to(device)
             labels = batch["labels"].to(device)
-            outputs = model(input_ids=input_ids, attention_mask=attn_mask, labels=labels)
-            loss = outputs.loss / args.gradient_accumulation_steps
+            outputs = model(input_ids=input_ids, attention_mask=attn_mask)
+            loss = criterion(outputs.logits, labels) / args.gradient_accumulation_steps
             loss.backward()
             train_loss += loss.detach().item()
             if (step + 1) % args.gradient_accumulation_steps == 0 or (step + 1) == len(train_loader):
@@ -624,8 +628,8 @@ def train_bert(args):
                 input_ids = batch["input_ids"].to(device)
                 attn_mask = batch["attention_mask"].to(device)
                 labels = batch["labels"].to(device)
-                outputs = model(input_ids=input_ids, attention_mask=attn_mask, labels=labels)
-                val_loss += outputs.loss.item()
+                outputs = model(input_ids=input_ids, attention_mask=attn_mask)
+                val_loss += criterion(outputs.logits, labels).item()
                 probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().numpy()
                 val_preds.extend(probs)
                 val_labels.extend(batch["labels"].cpu().numpy())

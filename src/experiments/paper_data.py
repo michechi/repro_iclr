@@ -10,13 +10,19 @@ from pathlib import Path
 
 ALPHABET = string.ascii_uppercase
 SEP = "\x1f"
-CORE_KEYS = {"kip_m4": "COTA", "kip_m6": "GHLYIZ", "ocdet": "WDQJXU",
-             "ocnoise": "WDQJXU", "test_just_pair": "WDQJXN"}
-ALIASES = {"ocnoisy": "ocnoise", "gpc": "test_just_pair"}
 
 
 def tokens(sequence):
     return sequence.split(SEP) if isinstance(sequence, str) and SEP in sequence else list(sequence)
+
+
+def parse_keys(keys):
+    """Accept an ordered key sequence as a string or iterable of symbols."""
+    if keys is None:
+        raise ValueError("keys are required")
+    if isinstance(keys, str):
+        return list(keys)
+    return list(keys)
 
 
 def oc_label(sequence, keys, lag):
@@ -64,11 +70,16 @@ def latent_label(sequence, rule):
     raise ValueError(f"unknown task {task}")
 
 
-def sample_rule(task, seed, *, n=20, m=6, alphabet=ALPHABET, lag=7, noise=0.):
+def sample_rule(task, seed, *, n=20, m=6, alphabet=ALPHABET, lag=7, noise=0., keys=None):
+    """Build a task rule. Keys are sampled from the alphabet unless provided explicitly."""
+    alphabet = list(alphabet) if not isinstance(alphabet, str) else list(alphabet)
     if (task not in {"oc", "kip", "gpc"} or len(alphabet) < 2
             or len(set(alphabet)) != len(alphabet)
-            or any(not isinstance(c, str) or len(c) != 1 for c in alphabet)):
+            or any(not isinstance(c, str) or not c for c in alphabet)):
         raise ValueError("invalid task/alphabet")
+    if keys is not None:
+        keys = parse_keys(keys)
+        m = len(keys)
     if any(not isinstance(value, int) or isinstance(value, bool) for value in (n, m)):
         raise ValueError("sequence length and key count must be integers")
     if n < 2 or not 1 <= m <= len(alphabet) or (task != "oc" and m == len(alphabet)) or not 0 <= noise < .5:
@@ -77,7 +88,12 @@ def sample_rule(task, seed, *, n=20, m=6, alphabet=ALPHABET, lag=7, noise=0.):
         raise ValueError("KIP requires 3<=m<=n")
     if task == "oc" and not 1 <= lag < n:
         raise ValueError("invalid lag")
-    keys = random.Random(seed).sample(list(alphabet), m)
+    if keys is None:
+        keys = random.Random(seed).sample(list(alphabet), m)
+    elif any(key not in alphabet for key in keys):
+        raise ValueError("explicit keys must belong to the alphabet")
+    elif len(set(keys)) != len(keys):
+        raise ValueError("explicit keys must be distinct")
     rule = {"task": task, "rule_seed": seed, "n": n, "m": m, "alphabet": alphabet,
             "keys": keys, "lag": lag if task == "oc" else None,
             "noise_probability": noise, "label_convention": "odd_inversions" if task == "kip" else task}
@@ -91,7 +107,7 @@ def validate_rule(rule):
     if rule.get("task") not in {"oc", "kip", "gpc"}:
         raise ValueError("unknown task in rule")
     alphabet, keys = rule.get("alphabet", []), rule.get("keys", [])
-    if len(alphabet) < 2 or len(set(alphabet)) != len(alphabet) or any(not isinstance(c, str) or len(c) != 1 for c in alphabet):
+    if len(alphabet) < 2 or len(set(alphabet)) != len(alphabet) or any(not isinstance(c, str) or not c for c in alphabet):
         raise ValueError("invalid rule alphabet")
     if not keys or len(set(keys)) != len(keys) or not set(keys) <= set(alphabet):
         raise ValueError("invalid rule keys")
@@ -110,6 +126,17 @@ def validate_rule(rule):
     if rule["task"] == "oc" and (not isinstance(rule.get("lag"), int)
             or isinstance(rule["lag"], bool) or not 1 <= rule["lag"] < n):
         raise ValueError("invalid OC lag")
+
+
+def shuffle_sequences(sequences, seed):
+    """Permute each sequence independently while preserving its token multiset C(X)."""
+    rng = random.Random(seed)
+    shuffled = []
+    for seq in sequences:
+        row = list(tokens(seq))
+        rng.shuffle(row)
+        shuffled.append(SEP.join(row) if isinstance(seq, str) else row)
+    return shuffled
 
 
 def generate_rows(rule, count, sequence_seed, noise_seed):
@@ -195,13 +222,25 @@ def canonical_gpc_indices(labels, target_rows, seed=0):
         for group, quota in zip(groups, quotas)])).astype(np.int64)
 
 
-def read_paper_split(directory, tag, split):
-    """Load sequences, binary labels, and split metadata for a synthetic task."""
+def read_paper_split(directory, tag, split, *, rule_override=None, subsample_rows=None, subsample_seed=0,
+                     label_binding="oracle"):
+    """Load sequences, binary labels, and split metadata for a synthetic task.
+
+    The labeling rule must come from ``paper_dataset_manifest.json`` or an
+    explicit ``rule_override``. No task-specific key sets are hardcoded.
+
+    ``label_binding``:
+      - ``oracle``: observed labels must match the rule on the loaded sequences
+        (or latent files under noise).
+      - ``preserved``: keep the stored labels even if sequences were shuffled
+        (Section 5 order controls); still verifies alphabet/length against the rule.
+    """
     import numpy as np
+    if label_binding not in {"oracle", "preserved"}:
+        raise ValueError("label_binding must be 'oracle' or 'preserved'")
     directory = Path(directory)
     if split not in {"train", "val", "test"}:
         raise ValueError("unknown split")
-    canonical_tag = ALIASES.get(tag, tag)
     manifest_path = directory / "paper_dataset_manifest.json"
     manifest_digest = sha256(manifest_path) if manifest_path.is_file() else None
     manifest = json.loads(manifest_path.read_text()) if manifest_path.is_file() else None
@@ -214,63 +253,70 @@ def read_paper_split(directory, tag, split):
     if not len(seqs) or len(seqs) != len(raw) or not np.isin(raw, [0, 1]).all():
         raise ValueError("nonempty aligned binary labels required")
     raw = raw.astype(np.int64)
-    if manifest is not None:
+    if rule_override is not None:
+        rule = dict(rule_override)
+    elif manifest is not None:
         if manifest.get("tag") != tag or manifest.get("protocol") != "paper_data_v1":
             raise ValueError("dataset manifest identity mismatch")
         for name, digest in input_hashes.items():
             if manifest.get("files_sha256", {}).get(name) != digest:
                 raise ValueError(f"dataset hash mismatch: {name}")
         rule = manifest.get("rule")
-    elif canonical_tag in CORE_KEYS:
-        task = "kip" if canonical_tag.startswith("kip_") else "oc" if canonical_tag.startswith("oc") else "gpc"
-        rule = {"task": task, "keys": list(CORE_KEYS[canonical_tag]), "n": 20, "alphabet": ALPHABET,
-                "lag": 7 if task == "oc" else None, "noise_probability": .3 if canonical_tag == "ocnoise" else 0.}
     else:
-        raise ValueError("unsupported paper input; supply a valid task tag or dataset manifest")
+        raise ValueError("dataset requires paper_dataset_manifest.json or an explicit rule_override")
     validate_rule(rule)
     if any(len(tokens(s)) != rule["n"] or any(c not in rule["alphabet"] for c in tokens(s)) for s in seqs):
         raise ValueError("sequence shape/alphabet does not match the paper rule")
-    latent = np.asarray([latent_label(s, rule) for s in seqs], dtype=np.int64)
+    sequence_latent = np.asarray([latent_label(s, rule) for s in seqs], dtype=np.int64)
     noise = rule["noise_probability"]
     labels = raw.copy()
-    if rule["task"] == "kip" and not noise:
-        if not np.array_equal(raw, latent):
-            raise ValueError("KIP labels do not match the declared parity convention")
-    elif not noise and not np.array_equal(raw, latent):
-        raise ValueError("deterministic labels disagree with the paper oracle")
-    if noise:
-        if manifest is not None:
+    if label_binding == "preserved":
+        # Order-control CSVs keep the pre-shuffle labels; do not re-derive them from sequences.
+        latent = raw.copy() if not noise else None
+        if noise:
+            if manifest is None:
+                raise ValueError("noisy preserved-label data requires a dataset manifest with latent labels")
+            lp = directory / f"y_latent_{split}_{tag}.csv"
+            if manifest.get("files_sha256", {}).get(lp.name) != sha256(lp):
+                raise ValueError("latent-label hash mismatch")
+            latent = np.asarray([float(v) for v in _read_csv(lp, "Outcome")], dtype=np.int64)
+            if not np.isin(latent, [0, 1]).all():
+                raise ValueError("latent labels must be binary")
+            input_hashes[lp.name] = sha256(lp)
+    else:
+        latent = sequence_latent
+        if rule["task"] == "kip" and not noise:
+            if not np.array_equal(raw, latent):
+                raise ValueError("KIP labels do not match the declared parity convention")
+        elif not noise and not np.array_equal(raw, latent):
+            raise ValueError("deterministic labels disagree with the paper oracle")
+        if noise:
+            if manifest is None:
+                raise ValueError("noisy data requires a dataset manifest with latent labels")
             lp = directory / f"y_latent_{split}_{tag}.csv"
             if manifest.get("files_sha256", {}).get(lp.name) != sha256(lp):
                 raise ValueError("latent-label hash mismatch")
             clean = np.asarray([float(v) for v in _read_csv(lp, "Outcome")])
             clean_evidence = {lp.name: sha256(lp)}
-        elif canonical_tag == "ocnoise":
-            clean_x = directory / f"X_{split}_ocdet.csv"
-            clean_y = directory / f"y_{split}_ocdet.csv"
-            if _read_csv(clean_x, "Sequences") != seqs:
-                raise ValueError("noisy and clean OC inputs are not aligned")
-            clean = np.asarray([float(v) for v in _read_csv(clean_y, "Outcome")])
-            clean_evidence = {p.name: sha256(p) for p in (clean_x, clean_y)}
-        else:
-            raise ValueError("noisy data requires a dataset manifest or paired clean OC labels")
-        if not np.isin(clean, [0, 1]).all() or not np.array_equal(clean, latent):
-            raise ValueError("clean labels disagree with maximal-run oracle")
-        input_hashes.update(clean_evidence)
+            if not np.isin(clean, [0, 1]).all() or not np.array_equal(clean, latent):
+                raise ValueError("clean labels disagree with maximal-run oracle")
+            input_hashes.update(clean_evidence)
     for name, digest in input_hashes.items():
         if sha256(directory / name) != digest:
             raise ValueError("input changed while loading")
     source_rows = len(labels)
     selection = {"strategy": "all_rows", "seed": None}
     indices = np.arange(source_rows, dtype=np.int64)
-    if manifest is None and canonical_tag == "test_just_pair":
-        expected = {"train": 400000, "val": 50000, "test": 50000}[split]
-        if source_rows == 2 * expected:
-            indices = canonical_gpc_indices(labels, expected, seed=0)
-            selection = {"strategy": "stratified_without_replacement_largest_remainder_sorted",
-                         "seed": 0, "rng": "numpy.Generator.PCG64"}
-        elif source_rows > 1000 and source_rows != expected:
-            raise ValueError("unexpected GPC split size")
+    if subsample_rows is not None:
+        if not isinstance(subsample_rows, int) or isinstance(subsample_rows, bool) or subsample_rows < 1:
+            raise ValueError("subsample_rows must be a positive integer")
+        if source_rows == 2 * subsample_rows and rule["task"] == "gpc":
+            # Remark A.4: stratify on latent Y*, not the (possibly noisy) observed label.
+            indices = canonical_gpc_indices(latent, subsample_rows, seed=subsample_seed)
+            selection = {"strategy": "stratified_without_replacement_largest_remainder_sorted_on_latent",
+                         "seed": subsample_seed, "rng": "numpy.Generator.PCG64"}
+        elif source_rows != subsample_rows:
+            raise ValueError(f"unexpected split size {source_rows}; expected {subsample_rows}")
     selection["indices_sha256"] = hashlib.sha256(indices.astype("<i8").tobytes()).hexdigest()
     selection["indices_hash_encoding"] = "little-endian int64 source row indices, C order"
     seqs = [seqs[int(i)] for i in indices]
@@ -279,7 +325,7 @@ def read_paper_split(directory, tag, split):
                 "labels": {"path": str(yp.resolve()), "sha256": input_hashes[yp.name]},
                 "task": rule["task"], "tag": tag, "split": split, "rows": len(labels), "rule": rule,
                 "source_rows": source_rows, "returned_rows": len(labels), "source_selection": selection,
-                "source_sha256": input_hashes,
+                "source_sha256": input_hashes, "label_binding": label_binding,
                 "label_convention": "odd_inversions" if rule["task"] == "kip" else rule["task"],
                 "noise_probability": noise,
                 "realized_flip_rate": float(np.mean(labels != latent)),

@@ -14,7 +14,7 @@ import torch
 
 from src.analysis.kip_attention_core import event_matrix, fixed_sample, letter_token_groups
 from src.analysis.kip_checkpoint_attention import capture_native_attention, digest, infer, read_json, write_json
-from src.analysis.oc_attention_core import METRICS, label, oc_statistics, perturbations
+from src.analysis.oc_attention_core import METRICS, label, oc_statistics, perturbations, resolve_oc_rule
 from src.analysis.qwen_oc_audit import reference_batch_groups, replace_batch_row
 from src.analysis.ckd_attention_audit import summarize_readout
 from src.experiments.encoder_oc_ckd import EncoderDataset, classification_metrics, prompt, read_data
@@ -149,6 +149,7 @@ def audit(args):
     progress("loading_checkpoint")
     torch.set_num_threads(4);torch.set_float32_matmul_precision("high")
     device=torch.device(args.device)
+    oc_rule = resolve_oc_rule(plan, job=job) if job["task"] == "oc" else None
     tokenizer=AutoTokenizer.from_pretrained(run/"best_model",local_files_only=True,trust_remote_code=False)
     tokenizer.truncation_side="right"
     model,loading=AutoModelForSequenceClassification.from_pretrained(run/"best_model",local_files_only=True,
@@ -193,17 +194,18 @@ def audit(args):
             encoded,events,groups,partial=encode_visible(tokenizer,sequences[row],job["task"])
             if encoded["input_ids"]!=dataset.input_ids[row]:raise ValueError("attention tokenization differs from training")
             if job["task"]=="oc":
-                if label(sequences[row])!=labels[row]:raise ValueError("OC oracle mismatch")
+                keys, lag = oc_rule["keys"], oc_rule["lag"]
+                if label(sequences[row], keys, lag)!=labels[row]:raise ValueError("OC oracle mismatch")
                 ml,bl,em=[],[],[]
                 for layer in layers:
                     a=captured[layer][offset]
-                    mass,baseline=oc_statistics(a,groups,events,causal=False,readout=0)
+                    mass,baseline=oc_statistics(a,groups,events,keys,lag,causal=False,readout=0)
                     ml.append(mass);bl.append(baseline)
                     if n<3:em.append(event_matrix(a,groups))
                 masses[n],baselines[n]=np.stack(ml),np.stack(bl)
                 if n<3:examples[n]=(events,np.stack(em))
                 if n in cf_positions:
-                    for variant,(changed,target) in perturbations(sequences[row],plan["sample_seed"]+row).items():
+                    for variant,(changed,target) in perturbations(sequences[row],keys,lag,plan["sample_seed"]+row).items():
                         enc,_,_,_=encode_visible(tokenizer,changed,"oc")
                         changed_inputs=replace_batch_row(inputs,offset,torch.tensor(enc["input_ids"]))
                         p2,_=infer(model,changed_inputs,False)

@@ -9,6 +9,8 @@ TRAIN_SIZES = (4000, 40000, 120000, 200000, 300000, 400000)
 MODELS = {
     "bert": {"model_name": "bert-base-uncased", "family": "encoder", "tuning": "lora"},
     "roberta": {"model_name": "FacebookAI/roberta-large", "family": "encoder", "tuning": "lora"},
+    # Appendix G attention audits use RoBERTa-base; main tables use RoBERTa-large above.
+    "roberta_base": {"model_name": "FacebookAI/roberta-base", "family": "encoder", "tuning": "full"},
     "llama1b": {"model_name": "meta-llama/Llama-3.2-1B", "family": "decoder", "tuning": "lora"},
     "llama8b": {"model_name": "meta-llama/Llama-3.1-8B", "family": "decoder", "tuning": "lora"},
     "llama70b": {"model_name": "meta-llama/Llama-3.1-70B", "family": "decoder", "tuning": "qlora"},
@@ -16,6 +18,8 @@ MODELS = {
     "qwen14b": {"model_name": "Qwen/Qwen2.5-14B", "family": "decoder", "tuning": "lora"},
     "qwen27b": {"model_name": "Qwen/Qwen3.8-27B", "family": "decoder", "tuning": "qlora"},
 }
+# QLoRA is required for 27B+ models and is also the Appendix G recipe for Qwen2.5-14B on KIP.
+QLORA_MODELS = frozenset({"llama70b", "qwen27b", "qwen14b"})
 
 
 @dataclass(frozen=True)
@@ -59,14 +63,14 @@ def model_spec(model: str, tuning: str | None = None) -> dict:
     spec["tuning"] = tuning or spec["tuning"]
     if spec["tuning"] not in {"full", "lora", "qlora"}:
         raise ValueError("tuning must be full, lora or qlora")
-    if spec["tuning"] == "qlora" and model not in {"llama70b", "qwen27b"}:
-        raise ValueError("QLoRA is used only for models with 27B+ parameters")
+    if spec["tuning"] == "qlora" and model not in QLORA_MODELS:
+        raise ValueError(f"QLoRA is supported only for {sorted(QLORA_MODELS)}")
     if model in {"llama70b", "qwen27b"} and spec["tuning"] != "qlora":
         raise ValueError("QLoRA is required for pretrained 27B+ models")
     return spec
 
 
-def sequence_prompt(sequence: str, *, decoder: bool, sequence_length: int = 20) -> str:
+def sequence_prompt(sequence: str, *, decoder: bool = False, sequence_length: int = 20) -> str:
     events = sequence.split("\x1f")
     if len(events) != sequence_length or any(len(event) != 1 or not "A" <= event <= "Z" for event in events):
         raise ValueError("inputs must have the declared number of uppercase A-Z events separated by U+001F")

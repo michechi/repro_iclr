@@ -13,7 +13,7 @@ from src.analysis.kip_attention_core import event_matrix, fixed_sample
 from src.analysis.kip_checkpoint_attention import (
     capture_native_attention, digest, encode, infer, load_checkpoint, read_json, write_json,
 )
-from src.analysis.oc_attention_core import METRICS, label, oc_statistics, perturbations
+from src.analysis.oc_attention_core import METRICS, label, oc_statistics, perturbations, resolve_oc_rule
 
 
 def reference_batch_groups(sample_indices, evaluation_indices, batch_size):
@@ -75,11 +75,13 @@ def run_audit(run_root, tag):
             raise ValueError("OC held-out data changed after training")
     sequences = pd.read_csv(source["features"]["path"], dtype=str, keep_default_na=False)["Sequences"].tolist()
     full_labels = pd.read_csv(source["labels"]["path"])["Outcome"].to_numpy(dtype=int)
+    oc_rule = resolve_oc_rule(plan, features_path=source["features"]["path"])
+    keys, lag = oc_rule["keys"], oc_rule["lag"]
     clean = pd.read_csv(Path(plan["data_dir"]) / "y_test_ocdet.csv")["Outcome"].to_numpy(dtype=int)
     # Clean-label stratification provides identical rows for deterministic/noisy fits.
     indices = fixed_sample(clean, plan["attention_samples"], plan["seed"])
     clean, observed = clean[indices], full_labels[indices]
-    if not np.array_equal([label(sequences[i]) for i in indices], clean):
+    if not np.array_equal([label(sequences[i], keys, lag) for i in indices], clean):
         raise ValueError("canonical OC oracle differs from sampled clean labels")
     reference = pd.read_csv(run / "test_predictions.csv").set_index("row_index").loc[indices]
     if not np.array_equal(reference["label"].to_numpy(), observed):
@@ -134,7 +136,7 @@ def run_audit(run_root, tag):
             layer_mass, layer_base, example = [], [], []
             for layer_id in layers:
                 attention = captured[layer_id][offset]
-                value, base = oc_statistics(attention, groups, letters)
+                value, base = oc_statistics(attention, groups, letters, keys, lag)
                 layer_mass.append(value)
                 layer_base.append(base)
                 if n < 3:
@@ -143,7 +145,7 @@ def run_audit(run_root, tag):
             if n < 3:
                 examples[n] = np.stack(example)
             if n in cf_positions:
-                for variant, (changed, expected) in perturbations(sequences[row], plan["seed"] + row).items():
+                for variant, (changed, expected) in perturbations(sequences[row], keys, lag, plan["seed"] + row).items():
                     encoded2, _, _ = encode(tokenizer, changed, "cpu", cfg["max_length"], decoder=True)
                     inputs2 = replace_batch_row(inputs, offset, encoded2["input_ids"][0])
                     p2, _ = infer(model, inputs2, True)

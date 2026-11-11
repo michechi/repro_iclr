@@ -12,6 +12,17 @@ RECIPES = {
     "qwen4b_lora": ("qwen4b", "lora"), "qwen14b_lora": ("qwen14b", "lora"),
     "qwen27b_qlora": ("qwen27b", "qlora"), "llama70b_qlora": ("llama70b", "qlora"),
 }
+# Appendix G attention fits (distinct from Table 1 / main-result recipes).
+ATTENTION_RECIPES = {
+    "bert_full": ("bert", "full"),
+    "roberta_base_full": ("roberta_base", "full"),
+    "roberta_base_lora": ("roberta_base", "lora"),
+    "llama1b_full": ("llama1b", "full"),
+    "llama8b_lora": ("llama8b", "lora"),
+    "qwen14b_qlora": ("qwen14b", "qlora"),
+    "qwen27b_qlora": ("qwen27b", "qlora"),
+}
+# Table 4 / Section 6: 70B and Qwen3-4B are not in the KIP printed cells.
 KIP_RECIPES = [key for key in RECIPES if key not in {"qwen4b_lora", "llama70b_qlora"}]
 TABLE_ROWS = {
     "ocdet": ["bert_lora", "roberta_lora", "llama1b_lora", "llama1b_full",
@@ -20,12 +31,17 @@ TABLE_ROWS = {
                 "llama8b_lora", "llama8b_full", "qwen4b_lora", "qwen14b_lora", "qwen27b_qlora"],
     "kip_m4": KIP_RECIPES, "kip_m6": KIP_RECIPES, "test_just_pair": list(RECIPES),
 }
-DATA_RECIPES = {
-    "ocdet": ("oc", 6, 0.0), "ocnoise": ("oc", 6, 0.3),
-    "kip_m4": ("kip", 4, 0.0), "kip_m6": ("kip", 6, 0.0),
-    "test_just_pair": ("gpc", 6, 0.0),
+
+# Published paper instances used only when regenerating the reported datasets.
+# Loaders never read these: they always take the rule from paper_dataset_manifest.json.
+PAPER_INSTANCES = {
+    "ocdet": {"task": "oc", "key_letters": "WDQJXU", "lag": 7, "noise": 0.0, "n": 20, "m": 6},
+    "ocnoise": {"task": "oc", "key_letters": "WDQJXU", "lag": 7, "noise": 0.3, "n": 20, "m": 6},
+    "kip_m4": {"task": "kip", "key_letters": "COTA", "noise": 0.0, "n": 20, "m": 4},
+    "kip_m6": {"task": "kip", "key_letters": "GHLYIZ", "noise": 0.0, "n": 20, "m": 6},
+    "test_just_pair": {"task": "gpc", "key_letters": "WDQJXN", "noise": 0.0, "n": 20, "m": 6},
 }
-DATA_DIRS = {tag: f"data/paper/{tag}" for tag in DATA_RECIPES}
+DATA_DIRS = {tag: f"data/paper/{tag}" for tag in PAPER_INSTANCES}
 ROUTES = {
     "pretrained": {"paper": "4.2-4.3, B.1-B.2, Tables 1/3/4/5", "entrypoint": "scripts/run_paper_pretrained.py", "training": True},
     "kip-sweep": {"paper": "4.3, Table 4", "entrypoint": "scripts/run_kip_data_efficiency.py", "training": True},
@@ -39,8 +55,26 @@ ROUTES = {
 }
 
 
+def data_generation_command(tag, data_root="data/paper", seed=None, *, use_paper_keys=True):
+    """Build a ``run_paper_data.py`` command for one synthetic instance."""
+    if tag not in PAPER_INSTANCES:
+        raise ValueError(f"unknown paper instance {tag!r}; choose {tuple(PAPER_INSTANCES)}")
+    instance = PAPER_INSTANCES[tag]
+    cmd = ["python", "-B", "scripts/run_paper_data.py",
+           "--task", instance["task"], "--tag", tag,
+           "--keys", str(instance["m"]), "--noise", str(instance["noise"]),
+           "--length", str(instance["n"]),
+           "--seed", str(SEEDS[0] if seed is None else seed),
+           "--output", str(Path(data_root) / tag)]
+    if instance["task"] == "oc":
+        cmd.extend(["--lag", str(instance["lag"])])
+    if use_paper_keys:
+        cmd.extend(["--key-letters", instance["key_letters"]])
+    return cmd + ["--execute"]
+
+
 def pretrained_plan(root, *, scope="all-core", sizes=TRAIN_SIZES, seeds=SEEDS, snapshots=None,
-                    data_root="data/paper"):
+                    data_root="data/paper", use_paper_keys=True):
     """Build the Section 4.3 pretrained experiment schedule."""
     if scope not in {"all-core", "table-cells"}:
         raise ValueError("scope must be all-core or table-cells")
@@ -71,10 +105,9 @@ def pretrained_plan(root, *, scope="all-core", sizes=TRAIN_SIZES, seeds=SEEDS, s
     return {"schema_version": 1, "scope": scope,
             "protocol": CONFIG.to_dict(), "job_count": len(jobs),
             "seeds": list(seeds),
+            "paper_instances": PAPER_INSTANCES,
             "data_generation_commands": [
-                ["python", "-B", "scripts/run_paper_data.py", "--task", task,
-                 "--tag", tag, "--keys", str(keys), "--noise", str(noise),
-                 "--seed", str(SEEDS[0]), "--output", str(Path(data_root) / tag), "--execute"]
-                for tag, (task, keys, noise) in DATA_RECIPES.items()
+                data_generation_command(tag, data_root, seeds[0], use_paper_keys=use_paper_keys)
+                for tag in PAPER_INSTANCES
             ],
             "jobs": jobs}

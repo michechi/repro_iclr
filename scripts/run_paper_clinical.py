@@ -31,9 +31,14 @@ def parse_args(argv=None):
     parser.add_argument("--mode", choices=["protocol", "cohort", "prepare", "summarize", "baselines"], default="protocol")
     parser.add_argument("--diagnoses", type=Path)
     parser.add_argument("--admissions", type=Path)
-    parser.add_argument("--mapping", type=Path, default=ROOT / "codes/CCS_DX_mapping.csv")
-    parser.add_argument("--unmapped-policy", choices=["error", "other", "drop"])
-    parser.add_argument("--mapping-conflicts", choices=["error", "first", "last"], default="error")
+    pinned = protocol.PROTOCOL["ccs_mapping"]
+    parser.add_argument("--mapping", type=Path, default=ROOT / pinned["source"])
+    parser.add_argument("--unmapped-policy", choices=["error", "other", "drop"],
+                        default=pinned["unmapped_policy"],
+                        help=f"published Tables 13-15 use {pinned['unmapped_policy']!r}")
+    parser.add_argument("--mapping-conflicts", choices=["error", "first", "last"],
+                        default=pinned["conflict_policy"],
+                        help=f"published Tables 13-15 use {pinned['conflict_policy']!r}")
     parser.add_argument("--cohort", type=Path)
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--seed", type=int, default=42)
@@ -42,8 +47,14 @@ def parse_args(argv=None):
         parser.error("seed must be nonnegative")
     if args.mode != "protocol" and not args.output_dir:
         parser.error("execution requires --output-dir")
-    if args.mode == "cohort" and not (args.diagnoses and args.admissions and args.unmapped_policy):
-        parser.error("cohort requires --diagnoses, --admissions and --unmapped-policy")
+    if args.mode == "cohort" and not (args.diagnoses and args.admissions):
+        parser.error("cohort requires --diagnoses and --admissions")
+    if args.mode == "cohort" and (
+            args.unmapped_policy != pinned["unmapped_policy"]
+            or args.mapping_conflicts != pinned["conflict_policy"]):
+        parser.error("cohort policies must match PROTOCOL['ccs_mapping'] "
+                     f"({pinned['conflict_policy']!r} conflicts, {pinned['unmapped_policy']!r} unmapped); "
+                     "override only by editing the pinned protocol")
     if args.mode in {"prepare", "summarize", "baselines"} and not args.cohort:
         parser.error("prepare/summarize/baselines require --cohort")
     return args
@@ -66,7 +77,9 @@ def main(argv=None):
     input_hashes = {key: protocol.sha256(path) for key, path in inputs.items()}
     manifest = {**plan, "status": "running", "source_sha256": sources, "input_sha256": input_hashes,
                 "local_patient_level_output": args.mode in {"cohort", "prepare"},
-                "mapping_conflict_policy": args.mapping_conflicts}
+                "ccs_mapping": protocol.PROTOCOL["ccs_mapping"],
+                "mapping_conflict_policy": args.mapping_conflicts,
+                "unmapped_policy": args.unmapped_policy}
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     if args.mode == "cohort":
         records, summary = protocol.build_cohort(lambda: protocol.read_csv(args.diagnoses),

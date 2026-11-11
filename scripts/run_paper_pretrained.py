@@ -22,16 +22,16 @@ def parse_args(argv=None):
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=SEEDS[0])
     parser.add_argument("--train-size", type=int, choices=TRAIN_SIZES, default=400000)
-    parser.add_argument("--microbatch", type=int, default=16)
-    parser.add_argument("--eval-batch-size", type=int, default=16)
+    parser.add_argument("--microbatch", type=int, default=CONFIG.effective_batch_size)
+    parser.add_argument("--eval-batch-size", type=int, default=CONFIG.effective_batch_size)
     parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda")
     parser.add_argument("--smoke", action="store_true", help="run a small smoke check")
     execution = parser.add_mutually_exclusive_group()
     execution.add_argument("--dry-run", action="store_true", help="print protocol (the default)")
     execution.add_argument("--execute", action="store_true", help="start this fit")
     args = parser.parse_args(argv)
-    if args.microbatch < 1 or 16 % args.microbatch:
-        parser.error("microbatch must divide effective batch size 16")
+    if args.microbatch < 1 or CONFIG.effective_batch_size % args.microbatch:
+        parser.error(f"microbatch must divide effective batch size {CONFIG.effective_batch_size}")
     if args.eval_batch_size < 1:
         parser.error("evaluation batch size must be positive")
     try:

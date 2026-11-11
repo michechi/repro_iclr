@@ -3,23 +3,22 @@ from __future__ import annotations
 
 import numpy as np
 
-KEYS = {"kip_m4": "COTA", "kip_m6": "GHLYIZ"}
+from src.experiments.paper_data import kip_label
+
 PREFIX = "Sequential events: "
 METRICS = ("key_to_key", "key_to_inversion", "key_to_noninversion",
            "key_to_distractor", "key_to_self", "key_to_prompt_special",
            "readout_to_key", "readout_to_distractor", "readout_to_prompt_special")
 
 
-def validate_sequence(sequence, tag):
+def validate_sequence(sequence, keys):
+    """Return letters and the paper KIP label (odd inversion count -> 1)."""
     letters = sequence.split("\x1f")
-    if len(letters) != 20 or any(len(c) != 1 or not "A" <= c <= "Z" for c in letters):
-        raise ValueError("expected 20 uppercase letters")
-    keys = KEYS[tag]
+    if not letters or any(len(c) != 1 for c in letters):
+        raise ValueError("expected unit-symbol events separated by U+001F")
     if any(letters.count(c) != 1 for c in keys):
         raise ValueError("each KIP key must occur exactly once")
-    ranks = [keys.index(c) for c in letters if c in keys]
-    inversions = sum(a > b for i, a in enumerate(ranks) for b in ranks[i + 1:])
-    return letters, int(inversions % 2 == 0)
+    return letters, kip_label(letters, keys)
 
 
 def letter_token_groups(offsets, letters):
@@ -37,16 +36,17 @@ def letter_token_groups(offsets, letters):
     return groups
 
 
-def counterfactuals(sequence, tag):
-    letters, label = validate_sequence(sequence, tag)
-    positions = [i for i, c in enumerate(letters) if c in KEYS[tag]]
+def counterfactuals(sequence, keys):
+    letters, label = validate_sequence(sequence, keys)
+    key_set = set(keys)
+    positions = [i for i, c in enumerate(letters) if c in key_set]
     swapped = letters.copy()
     i, j = positions[:2]
     swapped[i], swapped[j] = swapped[j], swapped[i]
     key_swap = "\x1f".join(swapped)
-    if validate_sequence(key_swap, tag)[1] != 1 - label:
+    if validate_sequence(key_swap, keys)[1] != 1 - label:
         raise AssertionError("a transposition must flip inversion parity")
-    distractors = [i for i, c in enumerate(letters) if c not in KEYS[tag]]
+    distractors = [i for i, c in enumerate(letters) if c not in key_set]
     pair = next(((i, j) for i in distractors for j in distractors if i < j and letters[i] != letters[j]), None)
     result = {"key_swap": (key_swap, 1 - label)}
     if pair:
@@ -54,13 +54,13 @@ def counterfactuals(sequence, tag):
         i, j = pair
         swapped[i], swapped[j] = swapped[j], swapped[i]
         sequence2 = "\x1f".join(swapped)
-        if validate_sequence(sequence2, tag)[1] != label:
+        if validate_sequence(sequence2, keys)[1] != label:
             raise AssertionError("distractor swap changed key parity")
         result["distractor_swap"] = (sequence2, label)
     return result
 
 
-def attention_statistics(attention, groups, letters, tag, causal, readout):
+def attention_statistics(attention, groups, letters, keys, causal, readout):
     """Per-head mass and uniform-visible-token baseline, averaged over key events.
 
     Masked future tokens are excluded from both mass and baseline. Queries of
@@ -77,8 +77,8 @@ def attention_statistics(attention, groups, letters, tag, causal, readout):
     if np.any(np.abs(a[:, ~allowed]) > 1e-6):
         raise ValueError("causal attention contains future-token mass")
     uniform = allowed / allowed.sum(-1, keepdims=True)
-    keys = KEYS[tag]
-    ki = [i for i, c in enumerate(letters) if c in keys]
+    key_set = set(keys)
+    ki = [i for i, c in enumerate(letters) if c in key_set]
     key_tokens = {t for i in ki for t in groups[i]}
     event_tokens = {t for g in groups for t in g}
     distractor_tokens = event_tokens - key_tokens

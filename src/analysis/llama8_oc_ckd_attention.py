@@ -24,7 +24,7 @@ from src.analysis.kip_attention_core import event_matrix, fixed_sample, letter_t
 from src.analysis.kip_checkpoint_attention import (
     capture_native_attention, digest, infer, load_checkpoint, read_json, write_json,
 )
-from src.analysis.oc_attention_core import METRICS, label, oc_statistics, perturbations
+from src.analysis.oc_attention_core import METRICS, label, oc_statistics, perturbations, resolve_oc_rule
 from src.analysis.qwen_oc_audit import reference_batch_groups, replace_batch_row
 from src.experiments.kip_encoder_training import DynamicPadding
 
@@ -182,6 +182,7 @@ def audit(args):
     torch.set_num_threads(4)
     torch.set_float32_matmul_precision("high")
     device = torch.device(args.device)
+    oc_rule = resolve_oc_rule(plan, job=job) if job["task"] == "oc" else None
     model_job = dict(kind="efficiency", run=str(run), checkpoint=str(checkpoint),
                      arm="llama8b_lora", model_source=plan["models"]["llama8b_lora"]["path"])
     model, tokenizer, model_meta = load_checkpoint(model_job, device=device)
@@ -252,12 +253,13 @@ def audit(args):
             if encoded["input_ids"] != dataset.input_ids[row]:
                 raise ValueError("attention tokenization differs from training")
             if job["task"] == "oc":
-                if label(sequences[row]) != labels[row]:
+                keys, lag = oc_rule["keys"], oc_rule["lag"]
+                if label(sequences[row], keys, lag) != labels[row]:
                     raise ValueError("deterministic OC oracle differs from saved labels")
                 layer_mass, layer_base, matrices = [], [], []
                 for layer in layers:
                     attention = captured[layer][offset]
-                    mass, baseline = oc_statistics(attention, groups, events, causal=True)
+                    mass, baseline = oc_statistics(attention, groups, events, keys, lag, causal=True)
                     layer_mass.append(mass)
                     layer_base.append(baseline)
                     if n < len(examples):
@@ -266,7 +268,7 @@ def audit(args):
                 if n < len(examples):
                     examples[n] = (events, np.stack(matrices))
                 if n in cf_positions:
-                    for variant, (changed, target) in perturbations(sequences[row], plan["sample_seed"] + row).items():
+                    for variant, (changed, target) in perturbations(sequences[row], keys, lag, plan["sample_seed"] + row).items():
                         changed_encoded, _, _ = encode_events(tokenizer, changed, "oc", recipe["max_length"])
                         changed_inputs = replace_batch_row(inputs, offset, torch.tensor(changed_encoded["input_ids"]))
                         changed_p, _ = infer(model, changed_inputs, True)

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Appendix D.4 held-out-rule generalization on the OC-Noisy family.
+"""Appendix D.4 held-out-rule generalization.
 
-Six datasets, each an OC-Noisy draw (n=20, 26 letters, m=6, pi=0.3, 400K/50K/50K)
-with its own random key set S, ranking kappa, and lag lambda in {1, ..., n-1}.
-L2 logistic regression trains on five rules and is scored on the held-out rule
-(across-rule) and on a held-out split of that same rule (within-rule). The two
-Appendix D.4 features are full letter counts and lambda-aware pair counts.
+Six OC datasets (n=20, 26 letters, m=6, 400K/50K/50K) draw random key sets S,
+rankings kappa, and lags lambda in {1, ..., n-1} from the same configuration
+family as the main OC experiments. The published Appendix D.4 numbers
+(within-rule AUC 1.00 / across-rule AUC 0.50 for lambda-aware pairs) use
+deterministic labels (pi=0): with pi=0.3 the within-rule ceiling is the
+Theorem A.1 oracle (~0.67), not 1.00. Pass --noise-probability 0.3 only for
+the optional noisy transfer check.
 """
 from __future__ import annotations
 
@@ -95,7 +97,7 @@ def ordered_keys(rule: dict) -> list[str]:
 
 def generate_rule_dataset(
     rule: dict, n_sequences: int, n: int = 20, seed: int = 0,
-    noise_probability: float = 0.3, noise_seed: int | None = None,
+    noise_probability: float = 0.0, noise_seed: int | None = None,
 ):
     """Draw iid uniform inputs, latent Y*, and observed Y = Y* XOR E."""
     import numpy as np
@@ -212,7 +214,8 @@ def parse_args(argv=None):
     p.add_argument("--fixed_lag", type=int, default=0,
                    help="if >0, all rules use this lag (pure S/kappa variation)")
     p.add_argument("--seed-base", type=int, default=SEED_BASE)
-    p.add_argument("--noise-probability", type=float, default=0.3)
+    p.add_argument("--noise-probability", type=float, default=0.0,
+                   help="Published D.4 table uses 0.0; 0.3 matches OC-Noisy label noise but cannot reach AUC 1.00")
     execution = p.add_mutually_exclusive_group()
     execution.add_argument("--execute", action="store_true", help="generate data and fit models")
     execution.add_argument("--dry-run", action="store_true", help="print the Appendix D.4 specification (the default)")

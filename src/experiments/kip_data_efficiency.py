@@ -27,17 +27,17 @@ from src.experiments.paper_protocol import CONFIG, PROTOCOL_ID, SEEDS
 from src.experiments.paper_data import read_paper_split as read_split
 
 ROOT = Path(__file__).resolve().parents[2]
-ARMS = ("qwen27b_qlora", "qwen14b_lora", "llama8b_lora", "llama8b_full")
+ARMS = ("qwen27b_qlora", "qwen14b_lora", "qwen14b_qlora", "llama8b_lora", "llama8b_full")
 FRACTIONS = (0.01, 0.10, 0.30, 0.50, 0.75, 1.0)
 
 
-def selected_indices(labels, fraction, seed, *, smoke=False, split="train"):
+def selected_indices(labels, fraction, seed, *, smoke=False, split="train", stratify_by=None):
     if not math.isfinite(fraction) or not 0 < fraction <= 1:
         raise ValueError("fraction must be finite and in (0, 1]")
     limit = int(len(labels) * fraction) if split == "train" else len(labels)
     if smoke:
         limit = min(limit, 256 if split == "train" else 128)
-    return subset_indices(labels, limit, seed)
+    return subset_indices(labels, limit, seed, stratify_by=stratify_by)
 
 
 def installed_versions(packages):
@@ -79,19 +79,19 @@ def parse_args(argv=None):
     parser.add_argument("--fraction", type=float, required=True)
     parser.add_argument("--tag", choices=["kip_m4", "kip_m6"], default="kip_m4")
     parser.add_argument("--seed", type=int, default=SEEDS[0])
-    parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument("--batch-size", type=int, default=CONFIG.effective_batch_size)
     parser.add_argument("--gradient-accumulation-steps", type=int, default=1)
     parser.add_argument("--eval-batch-size", type=int, default=128)
     parser.add_argument("--epochs", type=int)
-    parser.add_argument("--patience", type=int, default=3)
-    parser.add_argument("--lr", type=float, default=2e-5)
+    parser.add_argument("--patience", type=int, default=CONFIG.patience)
+    parser.add_argument("--lr", type=float, default=CONFIG.learning_rate)
     parser.add_argument("--threads", type=int, default=8)
     parser.add_argument("--progress-steps", type=int, default=20)
     parser.add_argument("--optimizer-offload", choices=["none", "cpu"], default="none")
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args(argv)
     args.data_dir = (args.data_dir if args.data_dir is not None else ROOT / "data/paper" / args.tag).expanduser().resolve()
-    args.epochs = args.epochs if args.epochs is not None else (1 if args.smoke else 20)
+    args.epochs = args.epochs if args.epochs is not None else (1 if args.smoke else CONFIG.max_epochs)
     for name in ("batch_size", "gradient_accumulation_steps", "eval_batch_size", "epochs",
                  "patience", "threads", "progress_steps"):
         if getattr(args, name) < 1:
@@ -127,7 +127,7 @@ def train(args):
     device = torch.device("cuda")
     base = {"arm": args.arm, "fraction": args.fraction, "seed": args.seed,
             "tag": args.tag, "mode": "ordered", "is_smoke": args.smoke,
-            "protocol": "paper_v2", "protocol_id": PROTOCOL_ID}
+            "protocol": PROTOCOL_ID, "protocol_id": PROTOCOL_ID}
 
     def progress(state, **details):
         record = {**base, "status": state, "pid": os.getpid(),
@@ -137,28 +137,32 @@ def train(args):
         print(json.dumps({"event": state, **details}, allow_nan=False), flush=True)
 
     progress("loading_data")
+    from src.experiments.paper_data import latent_label
     selected, provenance, rows = {}, {}, {}
     expected = {"train": 400000, "val": 50000, "test": 50000}
     for split in ("train", "val", "test"):
         sequences, labels, metadata = read_split(args.data_dir, args.tag, split)
         if len(labels) != expected[split]:
             raise ValueError(f"{split} requires {expected[split]} source rows")
-        indices = selected_indices(labels, args.fraction, args.seed, smoke=args.smoke, split=split)
+        latent = np.asarray([latent_label(s, metadata["rule"]) for s in sequences], dtype=np.int64)
+        indices = selected_indices(labels, args.fraction, args.seed, smoke=args.smoke, split=split,
+                                   stratify_by=latent)
         selected[split] = ([sequences[i] for i in indices], labels[indices], indices)
         provenance[split] = metadata
         rows[split] = len(indices)
         np.save(output / f"{split}_indices.npy", indices, allow_pickle=False)
+    seq_len = provenance["test"]["rule"]["n"]
     config = {**base, "schema_version": 1, "model_source": model_provenance(args.model_path),
               "data": provenance, "rows": rows, "batch_size": args.batch_size,
               "gradient_accumulation_steps": args.gradient_accumulation_steps,
               "effective_batch_size": args.batch_size * args.gradient_accumulation_steps,
               "eval_batch_size": args.eval_batch_size, "epochs": args.epochs,
-              "patience": args.patience, "lr": args.lr, "weight_decay": 0.01,
+              "patience": args.patience, "lr": args.lr, "weight_decay": CONFIG.weight_decay,
               "max_grad_norm": CONFIG.max_grad_norm, "adam_betas": CONFIG.adam_betas, "adam_epsilon": CONFIG.adam_epsilon,
-              "label_convention": provenance["test"]["label_convention"], "warmup_ratio": 0.06, "optimizer": "AdamW", "optimizer_state_dtype": "float32",
+              "label_convention": provenance["test"]["label_convention"], "warmup_ratio": CONFIG.warmup_ratio, "optimizer": CONFIG.optimizer, "optimizer_state_dtype": "float32",
               "optimizer_offload": args.optimizer_offload, "precision": "bf16_autocast",
-              "gradient_checkpointing": True, "max_length": 200,
-              "prompt": "Sequential events: " + " ".join(["<event>"] * 20) + "\nOutcome (0 or 1):",
+              "gradient_checkpointing": True, "max_length": CONFIG.max_length,
+              "prompt": "Sequential events: " + " ".join(["<event>"] * seq_len) + "\nOutcome (0 or 1):",
               "loss": "classification_cross_entropy_plus_prompt_next_token_cross_entropy",
               "selection": "minimum_validation_loss", "threshold_selection": "validation_f1",
               "stopping_rule": "validation_loss_patience",
@@ -166,12 +170,13 @@ def train(args):
     atomic_json({"config": config, "created_at_unix": time.time()}, output / "manifest.json")
     progress("loading_model")
     model, tokenizer, model_metadata = load_classifier(args.arm, args.model_path, gradient_checkpointing=True, protocol="paper")
-    datasets = {split: PaperTokenizedDataset(sequences, labels, tokenizer, 200, decoder=True)
+    datasets = {split: PaperTokenizedDataset(sequences, labels, tokenizer, CONFIG.max_length, decoder=True,
+                                             sequence_length=provenance[split]["rule"]["n"])
                 for split, (sequences, labels, _) in selected.items()}
     generator = torch.Generator().manual_seed(args.seed)
     loaders = {split: DataLoader(data, batch_size=args.batch_size if split == "train" else args.eval_batch_size,
                                  shuffle=split == "train", generator=generator if split == "train" else None,
-                                 collate_fn=DynamicPadding(tokenizer.pad_token_id, 200),
+                                 collate_fn=DynamicPadding(tokenizer.pad_token_id, CONFIG.max_length),
                                  num_workers=0, pin_memory=True)
                for split, data in datasets.items()}
     manifest = {"config": config, "model": model_metadata, "created_at_unix": time.time(),
@@ -192,9 +197,9 @@ def train(args):
         from src.experiments.kip_cpu_offload import CPUOffloadAdamW
         optimizer = CPUOffloadAdamW(parameters, lr=args.lr, weight_decay=CONFIG.weight_decay, betas=CONFIG.adam_betas, eps=CONFIG.adam_epsilon)
     else:
-        optimizer = torch.optim.AdamW(parameters, lr=args.lr, weight_decay=0.01, foreach=False)
+        optimizer = torch.optim.AdamW(parameters, lr=args.lr, weight_decay=CONFIG.weight_decay, foreach=False)
     total_steps = args.epochs * math.ceil(len(loaders["train"]) / args.gradient_accumulation_steps)
-    warmup_steps = int(0.06 * total_steps)
+    warmup_steps = int(CONFIG.warmup_ratio * total_steps)
 
     def schedule(step):
         if step < warmup_steps:

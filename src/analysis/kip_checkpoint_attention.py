@@ -13,9 +13,10 @@ import time
 import numpy as np
 
 from src.analysis.kip_attention_core import (
-    KEYS, METRICS, PREFIX, attention_statistics, counterfactuals, event_matrix,
+    METRICS, PREFIX, attention_statistics, counterfactuals, event_matrix,
     fixed_sample, letter_token_groups, validate_sequence,
 )
+from src.experiments.paper_data import read_paper_split
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RUN = ROOT / "results/kip_checkpoint_attention"
@@ -47,30 +48,76 @@ def read_json(path):
     return json.loads(Path(path).read_text())
 
 
-def discover_jobs():
+def _encoder_size_tag(config, model_name):
+    """Distinguish RoBERTa-base vs large (and BERT) in job keys."""
+    name = str(model_name).lower()
+    hidden = config.get("hidden_size")
+    layers = config.get("num_hidden_layers")
+    if "roberta" in name:
+        if (hidden, layers) == (768, 12) or "roberta-base" in name:
+            return "roberta_base"
+        if (hidden, layers) == (1024, 24) or "roberta-large" in name:
+            return "roberta_large"
+        return "roberta"
+    if "llama" in name:
+        return "llama1b" if "1b" in name or (hidden, layers) == (2048, 16) else "llama"
+    if "bert" in name:
+        return "bert"
+    return "encoder"
+
+
+def discover_jobs(*, efficiency_roots=None, encoder_roots=None):
+    """Discover completed KIP checkpoints under ``{run_root}/{arm}/{tag}/seed{seed}/fraction_XX/attempt_*``."""
     jobs = []
-    efficiency = ROOT / "results/kip_m4_data_efficiency"
-    for arm in ("qwen27b_qlora", "qwen14b_lora", "llama8b_lora", "llama8b_full"):
-        for fraction in ("1.00", "0.75", "0.50", "0.30", "0.10", "0.01"):
-            run = efficiency / arm / f"fraction_{fraction}/attempt_001"
-            reference = run
-            checkpoint = run / "best_trainable.pt"
-            if not checkpoint.is_file() or not (reference / "metrics.json").is_file():
-                continue
-            jobs.append(dict(key=f"{arm}_m4_{fraction}", kind="efficiency", run=str(run),
-                             reference=str(reference), checkpoint=str(checkpoint), tag="kip_m4", arm=arm))
-    for root_name in ("kip_llama1b_full", "kip_encoders"):
-        base = ROOT / "results" / root_name / "runs"
+    seen = set()
+    efficiency_roots = list(efficiency_roots or [ROOT / "results/kip_paper_protocol"])
+    arms = ("qwen27b_qlora", "qwen14b_qlora", "qwen14b_lora", "llama8b_lora", "llama8b_full")
+    fractions = ("1.00", "0.75", "0.50", "0.30", "0.10", "0.01")
+    for root in efficiency_roots:
+        root = Path(root)
+        if not root.is_dir():
+            continue
+        for arm in arms:
+            for tag_dir in sorted(root.glob(f"{arm}/kip_m*")):
+                tag = tag_dir.name
+                for seed_dir in sorted(tag_dir.glob("seed*")):
+                    seed = seed_dir.name.removeprefix("seed")
+                    for fraction in fractions:
+                        for attempt in sorted(seed_dir.glob(f"fraction_{fraction}/attempt_*")):
+                            checkpoint = attempt / "best_trainable.pt"
+                            if not checkpoint.is_file() or not (attempt / "metrics.json").is_file():
+                                continue
+                            key = f"{arm}_{tag}_seed{seed}_{fraction}"
+                            if key in seen:
+                                continue
+                            seen.add(key)
+                            jobs.append(dict(key=key, kind="efficiency", run=str(attempt),
+                                             reference=str(attempt), checkpoint=str(checkpoint),
+                                             tag=tag, arm=arm, seed=int(seed), fraction=fraction))
+    encoder_roots = list(encoder_roots or [
+        ROOT / "results/kip_llama1b_full/runs",
+        ROOT / "results/kip_encoders/runs",
+    ])
+    for base in encoder_roots:
+        base = Path(base)
+        if not base.is_dir():
+            continue
         for checkpoint in sorted(base.glob("*/*/kip_m*/ordered/seed*/best_model")):
             run = checkpoint.parent
-            if not (run / "metrics.json").is_file():
+            if not (run / "metrics.json").is_file() or not (run / "manifest.json").is_file():
                 continue
             config = read_json(run / "manifest.json")["config"]
-            model = "llama1b" if "llama" in config["model_name"].lower() else (
-                "roberta" if "roberta" in config["model_name"].lower() else "bert")
+            model_name = config.get("model_name") or config.get("model_source") or ""
+            model = _encoder_size_tag(config, model_name)
             tuning = config.get("tuning", "full")
-            jobs.append(dict(key=f"{model}_{tuning}_{config['tag']}", kind="hf", run=str(run),
-                             reference=str(run), checkpoint=str(checkpoint), tag=config["tag"], arm=model))
+            seed = config.get("seed", run.name.removeprefix("seed"))
+            key = f"{model}_{tuning}_{config['tag']}_seed{seed}"
+            if key in seen:
+                continue
+            seen.add(key)
+            jobs.append(dict(key=key, kind="hf", run=str(run), reference=str(run),
+                             checkpoint=str(checkpoint), tag=config["tag"], arm=model,
+                             seed=seed, model_size=model))
     return jobs
 
 
@@ -87,8 +134,10 @@ def build_plan(run_root, samples=1000, perturbations=200):
     if (run_root / "launch_plan.json").exists():
         raise FileExistsError("plan already exists")
     jobs = discover_jobs()
-    if not jobs or jobs[0]["arm"] != "qwen27b_qlora":
+    if not jobs or not any(job.get("arm") == "qwen27b_qlora" for job in jobs):
         raise RuntimeError("priority Qwen checkpoints missing")
+    # Keep Qwen-27B jobs first for the Appendix G priority audit order.
+    jobs = sorted(jobs, key=lambda job: (0 if job.get("arm") == "qwen27b_qlora" else 1, job["key"]))
     plan = dict(schema_version=1, task="checkpoint_only_kip_attention", samples=samples,
                 perturbations=perturbations, seed=9550, jobs=jobs,
                 fitting=False, checkpoint_writes=False, data={}, created_at_unix=time.time(),
@@ -96,18 +145,19 @@ def build_plan(run_root, samples=1000, perturbations=200):
     run_root.mkdir(parents=True, exist_ok=True)
     for tag in sorted({j["tag"] for j in jobs}):
         d = ROOT / "data/paper" / tag
-        xp, yp = d / f"X_test_{tag}.csv", d / f"y_test_{tag}.csv"
-        x = pd.read_csv(xp, dtype=str, keep_default_na=False)["Sequences"].tolist()
-        y = pd.read_csv(yp)["Outcome"].to_numpy(dtype=int)
-        if len(x) != 50000 or len(y) != len(x):
+        x, y, evidence = read_paper_split(d, tag, "test")
+        if len(x) != 50000:
             raise ValueError("requires the fixed 50K held-out split")
-        for s, label in zip(x, y):
-            if validate_sequence(s, tag)[1] != label:
+        keys = evidence["rule"]["keys"]
+        for s, outcome in zip(x, y):
+            if validate_sequence(s, keys)[1] != int(outcome):
                 raise ValueError("KIP rule does not match saved labels")
         indices = fixed_sample(y, samples, plan["seed"])
         cf = np.sort(np.random.default_rng(plan["seed"] + 1).choice(samples, perturbations, replace=False))
-        plan["data"][tag] = dict(features=str(xp), labels=str(yp),
+        xp, yp = Path(evidence["features"]["path"]), Path(evidence["labels"]["path"])
+        plan["data"][tag] = dict(features=str(xp), labels=str(yp), keys=list(keys),
                                  features_sha256=digest(xp), labels_sha256=digest(yp),
+                                 rule=evidence["rule"],
                                  indices=indices.tolist(), perturbation_sample_positions=cf.tolist())
     for job in jobs:
         manifest = read_json(Path(job["run"]) / "manifest.json")
@@ -415,7 +465,7 @@ def analyze_job(run_root, key, limit=None):
             per_layer, base_layer, example_matrices = [], [], []
             for layer_id in layer_ids:
                 attn = captured[layer_id][offset]
-                mass, baseline = attention_statistics(attn, groups, letters, job["tag"], causal,
+                mass, baseline = attention_statistics(attn, groups, letters, source["keys"], causal,
                                                       attn.shape[-1] - 1 if causal else 0)
                 per_layer.append(mass)
                 base_layer.append(baseline)
@@ -425,7 +475,7 @@ def analyze_job(run_root, key, limit=None):
             if n < 3:
                 matrices[n] = np.stack(example_matrices)
             if n in cf_positions:
-                for variant, (changed, expected_label) in counterfactuals(sequences[row], job["tag"]).items():
+                for variant, (changed, expected_label) in counterfactuals(sequences[row], source["keys"]).items():
                     variants.setdefault(variant, []).append((offset, n, row, changed, expected_label))
         del captured
         for variant, changed_rows in variants.items():

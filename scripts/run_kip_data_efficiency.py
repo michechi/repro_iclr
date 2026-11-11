@@ -21,16 +21,14 @@ if str(ROOT) not in sys.path:
 
 from src.experiments.paper_protocol import CONFIG, PROTOCOL_ID, SEEDS
 
-ARM_ORDER = ("qwen27b_qlora", "qwen14b_lora", "llama8b_lora", "llama8b_full")
+ARM_ORDER = ("qwen27b_qlora", "qwen14b_lora", "qwen14b_qlora", "llama8b_lora", "llama8b_full")
 FRACTIONS = (0.01, 0.10, 0.30, 0.50, 0.75, 1.0)
 MODEL_PATHS = {
-    "qwen27b_qlora": ROOT / Path("data/model_cache/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"),
-    "qwen14b_lora": ROOT / "data/model_cache/models--Qwen--Qwen2.5-14B/snapshots/97e1e76335b7017d8f67c08a19d103c0504298c9",
-    "llama8b_lora": ROOT / "data/model_cache/models--meta-llama--Llama-3.1-8B/snapshots/d04e592bb4f6aa9cfee91e2e20afa771667e1d4b",
-    "llama8b_full": ROOT / "data/model_cache/models--meta-llama--Llama-3.1-8B/snapshots/d04e592bb4f6aa9cfee91e2e20afa771667e1d4b",
+    arm: ROOT / "data/model_cache" / arm.rsplit("_", 1)[0]
+    for arm in ARM_ORDER
 }
 EFFECTIVE_BATCH_SIZE = CONFIG.effective_batch_size
-MICROBATCHES = {arm: 16 for arm in ARM_ORDER}
+MICROBATCHES = {arm: CONFIG.effective_batch_size for arm in ARM_ORDER}
 TAGS = ("kip_m4", "kip_m6")
 SOURCE_FILES = (
     "scripts/run_kip_data_efficiency.py",
@@ -159,11 +157,12 @@ def build_plan(args):
                                  "initial_batch_size": batch, "eval_batch_size": args.eval_batch_size,
                                  "command": training_command(args, arm, fraction, output, batch,
                                                              args.eval_batch_size, smoke, tag=tag, seed=seed)})
-    protocol = {"schema_version": 2, "protocol": "paper_v2", "protocol_id": PROTOCOL_ID, "tags": args.tags,
+    protocol = {"schema_version": 2, "protocol": PROTOCOL_ID, "protocol_id": PROTOCOL_ID, "tags": args.tags,
                 "mode": "ordered", "seeds": args.seeds,
                 "arms": args.arms, "fractions": args.fractions,
                 "effective_batch_size": EFFECTIVE_BATCH_SIZE,
-                "epochs": 20, "patience": 3, "learning_rate": 2e-5, "max_length": 200,
+                "epochs": CONFIG.max_epochs, "patience": CONFIG.patience,
+                "learning_rate": CONFIG.learning_rate, "max_length": CONFIG.max_length,
                 "loss": "classification_cross_entropy_plus_prompt_next_token_cross_entropy",
                 "validation_rows": 50000, "test_rows": 50000,
                 "fraction_applies_to": "training_only", "selection": "validation_loss",
@@ -208,7 +207,7 @@ def validated_metrics(path, job, seed=None):
     for name, value in expected.items():
         if metrics.get(name) != value:
             raise ValueError(f"metrics identity mismatch for {name}: expected {value!r}, found {metrics.get(name)!r}")
-    if (metrics.get("protocol") != "paper_v2" or metrics.get("selected_by") != "validation_loss"
+    if (metrics.get("protocol_id") != PROTOCOL_ID or metrics.get("selected_by") != "validation_loss"
             or metrics.get("stopping_rule") != "validation_loss_patience"):
         raise ValueError("metrics do not match the validation-loss stopping protocol")
     for name in ("auc", "accuracy", "f1", "loss"):

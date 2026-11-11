@@ -123,20 +123,32 @@ def build_scratch_model(config, n=20):
     return Scratch()
 
 
-def feature_matrix(sequences, family, *, keys="WDQJXU", lag=7, n=20):
+LAG_FREE_FEATURES = frozenset({"count26", "count_keys", "all_lag_pairs", "key_order_pairs"})
+
+
+def feature_matrix(sequences, family, *, keys, lag, n):
     """Sparse CSR counts for the Appendix D feature families."""
     from src.experiments.paper_data import tokens
     import numpy as np
     from scipy.sparse import csr_matrix
-    if not isinstance(n, int) or not isinstance(lag, int) or not 1 <= lag < n:
-        raise ValueError("features require 1<=lag<n")
-    if len(set(keys)) != len(keys) or any(len(c) != 1 or not "A" <= c <= "Z" for c in keys):
-        raise ValueError("feature keys must be distinct uppercase A-Z events")
+    if not isinstance(n, int) or n < 2:
+        raise ValueError("features require sequence length n>=2")
+    lag_free = family in LAG_FREE_FEATURES
+    if lag_free:
+        if lag is not None and (not isinstance(lag, int) or isinstance(lag, bool) or not 1 <= lag < n):
+            raise ValueError("optional lag must satisfy 1<=lag<n when provided")
+    elif not isinstance(lag, int) or isinstance(lag, bool) or not 1 <= lag < n:
+        raise ValueError(f"feature family {family!r} requires 1<=lag<n")
+    if (not keys or len(set(keys)) != len(keys)
+            or any(not isinstance(c, str) or len(c) != 1 for c in keys)):
+        raise ValueError("feature keys must be distinct unit symbols")
     key_index = {c: i for i, c in enumerate(keys)}
     m = len(keys)
-    dimensions = {"count26": 26, "count_keys": m, "residue": 26 * lag, "lag_pairs": 676,
-                  "key_lag_pairs": m * m, "position_pairs": (n - lag) * 676, "key_trigrams": m ** 3,
+    dimensions = {"count26": 26, "count_keys": m,
                   "all_lag_pairs": (n - 1) * 676, "key_order_pairs": m * (m - 1) // 2}
+    if not lag_free:
+        dimensions.update({"residue": 26 * lag, "lag_pairs": 676, "key_lag_pairs": m * m,
+                           "position_pairs": (n - lag) * 676, "key_trigrams": m ** 3})
     if family not in dimensions:
         raise ValueError("unknown feature family")
     indices = []
@@ -262,11 +274,16 @@ def frozen_llama_features(data, model_path, device="cuda", batch_size=16):
 def run_baseline(args):
     import numpy as np
     from sklearn.model_selection import train_test_split
-    from src.experiments.paper_data import read_paper_split, sha256
+    from src.experiments.paper_data import latent_label, read_paper_split, sha256, shuffle_sequences
     out = args.output_dir.resolve()
     if out.exists() and any(out.iterdir()):
         raise FileExistsError("output directory must be empty")
     config = configuration(args.model, args.variant, learning_rate=args.learning_rate, sensitivity=args.sensitivity)
+    shuffle_control = getattr(args, "shuffle_control", "none") or "none"
+    if shuffle_control not in {"none", "train_shuffled", "test_shuffled"}:
+        raise ValueError("shuffle_control must be none, train_shuffled, or test_shuffled")
+    if shuffle_control != "none" and args.model not in SCRATCH_CONFIGS:
+        raise ValueError("Section 5 shuffle controls are defined for scratch sequence models")
     random.seed(args.seed)
     np.random.seed(args.seed)
     data = {}
@@ -278,10 +295,20 @@ def run_baseline(args):
             raise ValueError(f"{split} requires {expected} source examples")
         ix = np.arange(len(y))
         if split == "train" and args.train_size < len(y):
-            ix, _ = train_test_split(ix, train_size=args.train_size, random_state=args.seed, stratify=y)
+            # Remark A.4: stratify on latent Y* (before noise), not the observed label.
+            latent = np.asarray([latent_label(x[i], ev["rule"]) for i in ix], dtype=np.int64)
+            ix, _ = train_test_split(ix, train_size=args.train_size, random_state=args.seed, stratify=latent)
             ix.sort()
-        data[split] = ([x[i] for i in ix], y[ix])
-        evidence[split] = ev
+        sequences = [x[i] for i in ix]
+        labels = y[ix]
+        if shuffle_control == "train_shuffled" and split in {"train", "val"}:
+            sequences = shuffle_sequences(sequences, args.seed + (0 if split == "train" else 1))
+        elif shuffle_control == "test_shuffled" and split == "test":
+            sequences = shuffle_sequences(sequences, args.seed + 2)
+        data[split] = (sequences, labels)
+        evidence[split] = {**ev, "shuffle_control": shuffle_control if (
+            (shuffle_control == "train_shuffled" and split in {"train", "val"})
+            or (shuffle_control == "test_shuffled" and split == "test")) else "none"}
         selected[split] = ix
     out.mkdir(parents=True, exist_ok=True)
     for split, ix in selected.items():
@@ -289,6 +316,7 @@ def run_baseline(args):
     manifest = {"protocol": "paper_core_baselines_v1", "protocol_id": "paper_core_baselines_v1", "model": args.model, "config": config,
                 "tag": args.tag, "seed": args.seed, "train_size": args.train_size, "data": evidence,
                 "feature_family": args.feature, "k": args.k, "model_path": str(args.model_path) if args.model_path else None,
+                "shuffle_control": shuffle_control, "label_binding": "preserve_original",
                 "threshold_selected_on": "validation",
                 "selected_indices_sha256": {s: sha256(out / f"{s}_indices.npy") for s in selected},
                 "source_sha256": {p.name: sha256(p) for p in (Path(__file__), Path(__file__).with_name("paper_data.py"), Path(__file__).with_name("paper_protocol.py"))}}
@@ -318,7 +346,11 @@ def run_baseline(args):
             features = frozen_llama_features(data, args.model_path, args.device)
         else:
             rule = evidence["train"]["rule"]
-            features = {s: feature_matrix(x, args.feature, keys=rule["keys"], lag=rule["lag"] or 7, n=rule["n"]) for s, (x, y) in data.items()}
+            if rule["lag"] is None and args.feature not in LAG_FREE_FEATURES:
+                raise ValueError(f"feature family {args.feature!r} requires an OC lag in the dataset rule")
+            lag = rule["lag"]
+            features = {s: feature_matrix(x, args.feature, keys=rule["keys"], lag=lag, n=rule["n"])
+                        for s, (x, y) in data.items()}
         if args.model.startswith("xgboost"):
             from xgboost import XGBClassifier
             model = XGBClassifier(**xgboost_parameters(data["train"][1], args.seed), n_jobs=args.threads)
@@ -355,6 +387,7 @@ def run_baseline(args):
     result = {"protocol": "paper_core_baselines_v1", "protocol_id": "paper_core_baselines_v1", "status": "completed",
               "model": args.model, "seed": args.seed, "tag": args.tag, "train_size": args.train_size,
               "rows": {s: len(y) for s, (x, y) in data.items()}, "is_smoke": False,
+              "shuffle_control": shuffle_control, "label_binding": "preserve_original",
               "label_convention": evidence["train"]["label_convention"], "threshold_selected_on": "validation",
               "validation": metrics(data["val"][1], vp, threshold), "test": metrics(data["test"][1], tp, threshold),
               "details": details, "seconds": time.monotonic() - started, "manifest_sha256": sha256(out / "manifest.json"),

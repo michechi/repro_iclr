@@ -20,7 +20,7 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Dataset
 
-from src.experiments.paper_protocol import CONFIG, PROTOCOL_ID, SEEDS
+from src.experiments.paper_protocol import CONFIG, PROTOCOL_ID, SEEDS, sequence_prompt
 
 
 SCHEMA_VERSION = 1
@@ -49,14 +49,6 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def sequence_prompt(sequence: str, *, decoder: bool = False) -> str:
-    events = sequence.split(SEP)
-    if len(events) != 20 or any(len(event) != 1 or not "A" <= event <= "Z" for event in events):
-        raise ValueError("KIP requires exactly 20 uppercase A-Z events separated by U+001F")
-    suffix = "\nOutcome (0 or 1):" if decoder else ""
-    return "Sequential events: " + " ".join(events) + suffix
-
-
 def read_split(directory: Path, tag: str, split: str) -> tuple[list[str], np.ndarray, dict[str, Any]]:
     x_path = directory / f"X_{split}_{tag}.csv"
     y_path = directory / f"y_{split}_{tag}.csv"
@@ -72,38 +64,47 @@ def read_split(directory: Path, tag: str, split: str) -> tuple[list[str], np.nda
     if len(np.unique(labels)) != 2:
         raise ValueError(f"{split}: both label classes are required")
     sequences = x["Sequences"].tolist()
+    seq_len = len(sequences[0].split(SEP))
     for row, sequence in enumerate(sequences):
         try:
-            sequence_prompt(sequence)
+            sequence_prompt(sequence, sequence_length=seq_len)
         except ValueError as error:
             raise ValueError(f"{x_path}, row {row}: {error}") from error
     provenance = {
         "rows": len(x), "positive_rows": int(labels.sum()),
+        "sequence_length": seq_len,
         "features": {"path": str(x_path.resolve()), "sha256": sha256(x_path)},
         "labels": {"path": str(y_path.resolve()), "sha256": sha256(y_path)},
     }
     return sequences, labels, provenance
 
 
-def subset_indices(labels: np.ndarray, limit: int | None, seed: int) -> np.ndarray:
+def subset_indices(labels: np.ndarray, limit: int | None, seed: int, *,
+                   stratify_by: np.ndarray | None = None) -> np.ndarray:
+    """Select a stratified subset. Remark A.4: pass latent Y* as ``stratify_by`` when available."""
     indices = np.arange(len(labels))
     if limit is None or limit >= len(labels):
         return indices
     if limit < 2:
         raise ValueError("row limits must permit both label classes")
-    selected, _ = train_test_split(indices, train_size=limit, stratify=labels, random_state=seed)
+    strata = labels if stratify_by is None else np.asarray(stratify_by)
+    if len(strata) != len(labels):
+        raise ValueError("stratify_by must align with labels")
+    selected, _ = train_test_split(indices, train_size=limit, stratify=strata, random_state=seed)
     return np.sort(selected)
 
 
 class TokenizedDataset(Dataset):
     def __init__(self, sequences: list[str], labels: np.ndarray, tokenizer: Any, max_length: int,
-                 *, decoder: bool = False):
+                 *, decoder: bool = False, sequence_length: int | None = None):
         self.labels = np.asarray(labels, dtype=np.int64)
         self.input_ids: list[list[int]] = []
         if len(sequences) != len(labels) or not sequences:
             raise ValueError("tokenization requires nonempty matching sequences and labels")
+        seq_len = len(sequences[0].split(SEP)) if sequence_length is None else sequence_length
         for start in range(0, len(sequences), 2048):
-            texts = [sequence_prompt(sequence, decoder=decoder) for sequence in sequences[start:start + 2048]]
+            texts = [sequence_prompt(sequence, decoder=decoder, sequence_length=seq_len)
+                     for sequence in sequences[start:start + 2048]]
             encoded = tokenizer(texts, padding=False, truncation=True, max_length=max_length, add_special_tokens=True,
                                 return_attention_mask=False, return_token_type_ids=False)
             self.input_ids.extend(encoded["input_ids"])
@@ -261,14 +262,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--shuffled-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--cache-dir", type=Path, required=True)
-    parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument("--batch-size", type=int, default=CONFIG.effective_batch_size)
     parser.add_argument("--eval-batch-size", type=int, default=128)
     parser.add_argument("--gradient-accumulation-steps", type=int, default=1)
-    parser.add_argument("--lr", type=float, default=2e-5)
-    parser.add_argument("--weight-decay", type=float, default=0.01)
+    parser.add_argument("--lr", type=float, default=CONFIG.learning_rate)
+    parser.add_argument("--weight-decay", type=float, default=CONFIG.weight_decay)
     parser.add_argument("--epochs", type=int)
-    parser.add_argument("--patience", type=int, default=3)
-    parser.add_argument("--warmup-ratio", type=float, default=0.06)
+    parser.add_argument("--patience", type=int, default=CONFIG.patience)
+    parser.add_argument("--warmup-ratio", type=float, default=CONFIG.warmup_ratio)
     parser.add_argument("--max-length", type=int, default=CONFIG.max_length)
     parser.add_argument("--precision", choices=["bf16", "fp32"], default="bf16")
     parser.add_argument("--device", choices=["cuda", "cpu"], default="cuda")
@@ -281,7 +282,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--max-test-rows", type=int)
     args = parser.parse_args(argv)
     if args.epochs is None:
-        args.epochs = 1 if args.smoke else 20
+        args.epochs = 1 if args.smoke else CONFIG.max_epochs
     if args.smoke:
         for split, default in [("train", 256), ("val", 128), ("test", 128)]:
             name = f"max_{split}_rows"
@@ -359,7 +360,8 @@ def train(args: argparse.Namespace) -> dict[str, Any]:
             if path.is_file() and path.suffix in {".json", ".txt", ".safetensors", ".bin"}:
                 source_files[path.name] = sha256(path)
     is_smoke = args.smoke or any(selected_counts[split] < provenance[split]["ordered"]["rows"]
-                                 for split in ("train", "val", "test"))
+                                 for split in ("val", "test"))
+    seq_len = provenance["test"]["ordered"]["sequence_length"]
     config = {
         "schema_version": SCHEMA_VERSION, "model_name": args.model_name, "model_source": source,
         "revision": args.revision, "source_file_sha256": source_files,
@@ -369,8 +371,8 @@ def train(args: argparse.Namespace) -> dict[str, Any]:
         "lr": args.lr, "weight_decay": args.weight_decay, "epochs": args.epochs,
         "patience": args.patience, "warmup_ratio": args.warmup_ratio,
         "max_length": args.max_length, "precision": args.precision,
-        "prompt": "Sequential events: " + " ".join(["<event>"] * 20),
-        "lora": {"rank": 8, "alpha": 16, "dropout": 0.1,
+        "prompt": "Sequential events: " + " ".join(["<event>"] * seq_len),
+        "lora": {"rank": CONFIG.lora_r, "alpha": CONFIG.lora_alpha, "dropout": CONFIG.lora_dropout,
                  "targets": ["query", "key", "value"]} if args.tuning == "lora" else None,
         "is_smoke": is_smoke, "selected_rows": selected_counts, "data": provenance,
         "selection": "minimum_validation_loss", "threshold_selection": "validation_f1",
@@ -404,23 +406,29 @@ def train(args: argparse.Namespace) -> dict[str, Any]:
     model = AutoModelForSequenceClassification.from_pretrained(source, num_labels=2, **load_kwargs)
     if model.config.model_type not in {"bert", "roberta"}:
         raise ValueError(f"expected BERT/RoBERTa, got {model.config.model_type}")
-    if model.config.model_type == "roberta" and (model.config.hidden_size != 1024 or model.config.num_hidden_layers != 24):
-        raise ValueError("RoBERTa fits use FacebookAI/roberta-large (24 layers, hidden size 1024)")
-    paper_rows = selected_counts == {"train": 400000, "val": 50000, "test": 50000}
+    if model.config.model_type == "roberta":
+        # Main tables use RoBERTa-large; Appendix G KIP/OC attention uses RoBERTa-base.
+        shape = (model.config.hidden_size, model.config.num_hidden_layers)
+        if shape not in {(1024, 24), (768, 12)}:
+            raise ValueError("RoBERTa fits require roberta-large (1024/24) or Appendix G roberta-base (768/12)")
     paper_settings = (args.max_length == CONFIG.max_length
                       and args.batch_size * args.gradient_accumulation_steps == CONFIG.effective_batch_size
-                      and args.lr == CONFIG.learning_rate and args.epochs == CONFIG.max_epochs
+                      and args.lr == CONFIG.learning_rate
+                      and args.weight_decay == CONFIG.weight_decay
+                      and args.warmup_ratio == CONFIG.warmup_ratio
+                      and args.epochs == CONFIG.max_epochs
                       and args.patience == CONFIG.patience and args.seed in SEEDS)
-    if paper_rows and not paper_settings:
-        raise ValueError("a 400K encoder fit must use Table 1 settings: length 200, effective batch 16, "
-                         "lr 2e-5, 20 epochs, patience 3, and seed 9550, 9551, or 9552")
+    if not is_smoke and not paper_settings:
+        raise ValueError("non-smoke encoder fits must use Table 1 settings: length 200, effective batch 16, "
+                         "lr 2e-5, weight decay 0.01, warmup 0.06, 20 epochs, patience 3, and seed 9550, 9551, or 9552")
     if args.tuning == "lora":
         from peft import LoraConfig, get_peft_model
-        model = get_peft_model(model, LoraConfig(r=8, lora_alpha=16, lora_dropout=0.1,
+        model = get_peft_model(model, LoraConfig(r=CONFIG.lora_r, lora_alpha=CONFIG.lora_alpha,
+                               lora_dropout=CONFIG.lora_dropout,
                                target_modules=["query", "key", "value"], bias="none", task_type="SEQ_CLS"))
     model.to(device)
     progress("tokenizing")
-    datasets = {split: TokenizedDataset(sequences, labels, tokenizer, args.max_length)
+    datasets = {split: TokenizedDataset(sequences, labels, tokenizer, args.max_length, sequence_length=seq_len)
                 for split, (sequences, labels, _) in selected_data.items()}
     token_lengths = {split: {"min": data.min_tokens, "max": data.max_tokens}
                      for split, data in datasets.items()}
@@ -560,9 +568,9 @@ def train(args: argparse.Namespace) -> dict[str, Any]:
         "stopping_rule": "validation_loss_patience",
         "max_length": args.max_length,
         "effective_batch_size": args.batch_size * args.gradient_accumulation_steps,
-        **({"protocol_id": PROTOCOL_ID, "protocol": "paper_v2",
+        **({"protocol_id": PROTOCOL_ID, "protocol": PROTOCOL_ID,
             "paper_recipe": f"{'roberta' if model.config.model_type == 'roberta' else 'bert'}_{args.tuning}"}
-           if paper_rows and paper_settings else {}),
+           if not is_smoke and paper_settings else {}),
         "validation": {"loss": val_loss, **metric_values(val_labels, val_probabilities, threshold)},
         "validation_at_0_5": metric_values(val_labels, val_probabilities, 0.5),
         "best_model": str(best_dir), "manifest": str(manifest_path),

@@ -14,6 +14,8 @@ from src.experiments.paper_parity_protocol import build_plan, summarize_run_root
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--section", choices=("all", "E1", "E2", "E3", "E4", "E5"), default="all")
+    parser.add_argument("--e5-keys", default="WDQJXN",
+                        help="Key letters for the E.5 curriculum (paper default: WDQJXN)")
     parser.add_argument("--run-root", type=Path, default=ROOT / "runs/paper_parity")
     parser.add_argument("--job", help="Exact job ID from plan")
     parser.add_argument("--bert-path", type=Path, help="Local BERT-base snapshot for BERT jobs")
@@ -30,7 +32,7 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
-    plan = build_plan(args.section)
+    plan = build_plan(args.section, e5_keys=args.e5_keys)
     if args.job:
         selected = [job for job in plan["jobs"] if job["id"] == args.job]
         if len(selected) != 1:
